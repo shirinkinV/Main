@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlotView", "PlotView\PlotVi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RungeKuttaMethod", "RungeKuttaMethod\RungeKuttaMethod.csproj", "{53B93C5B-73E1-4946-BCC9-09E4E4F0FE4E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task2", "Task2\Task2.csproj", "{4FEED7E8-8A1A-4EDA-AB9D-2DE22558679A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionsAndParsing", "FunctionsAndParsing\FunctionsAndParsing.csproj", "{859450FB-44E9-4927-9B85-7D6D20BB8320}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{53B93C5B-73E1-4946-BCC9-09E4E4F0FE4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53B93C5B-73E1-4946-BCC9-09E4E4F0FE4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53B93C5B-73E1-4946-BCC9-09E4E4F0FE4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FEED7E8-8A1A-4EDA-AB9D-2DE22558679A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FEED7E8-8A1A-4EDA-AB9D-2DE22558679A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FEED7E8-8A1A-4EDA-AB9D-2DE22558679A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FEED7E8-8A1A-4EDA-AB9D-2DE22558679A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{859450FB-44E9-4927-9B85-7D6D20BB8320}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{859450FB-44E9-4927-9B85-7D6D20BB8320}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{859450FB-44E9-4927-9B85-7D6D20BB8320}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{859450FB-44E9-4927-9B85-7D6D20BB8320}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

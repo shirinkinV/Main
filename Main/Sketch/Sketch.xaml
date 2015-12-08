@@ -1,0 +1,15 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Sketches"
+             xmlns:WPF="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF" x:Class="Sketches.Sketch"
+             mc:Ignorable="d" 
+             d:DesignHeight="26" d:DesignWidth="28" MinWidth="30" MinHeight="26" MaxWidth="28" MaxHeight="26">
+    <Grid>
+
+        <WPF:OpenGLControl x:Name="glControl" Resized="OpenGLControl_Resized" OpenGLDraw="OpenGLControl_OpenGLDraw" OpenGLInitialized="OpenGLControl_OpenGLInitialized" MinWidth="30" MinHeight="26" MaxWidth="32" MaxHeight="26"/>
+
+    </Grid>
+</UserControl>

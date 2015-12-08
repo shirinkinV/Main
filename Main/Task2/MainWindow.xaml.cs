@@ -89,7 +89,8 @@ namespace Task2
             gl.LoadIdentity();
             double ratio = capture.ActualWidth / Math.Max(1, capture.ActualHeight);
 
-            gl.Frustum(-0.1 * ratio, 0.1 * ratio, -0.1, 0.1, 0.1, 10);
+            //gl.Frustum(-0.1 * ratio, 0.1 * ratio, -0.1, 0.1, 0.1, 10);
+            gl.Ortho(-1.1 * ratio, 1.1 * ratio, -1.1, 1.1, 0.1,10);
         }
 
         private void capture_OpenGLDraw_1(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
@@ -113,16 +114,16 @@ namespace Task2
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             gl.LoadIdentity();
             gl.Translate(0, 0, -2);
-            gl.Rotate(45, 1, 0, 0);
+            gl.Rotate(10, 1, 0, 0);
 
             gl.LineWidth(2);
             gl.Color(1.0, 0, 0);
             drawCircle(gl, R, 1 - x1_func(time));
-
-            gl.LineWidth(1);
+                
             gl.Color(0.0, 0, 1);
             drawCircle(gl, 0.01, 1 - x2_func(time));
 
+            gl.LineWidth(1);
             gl.Color(0, 0, 0);
             gl.Begin(OpenGL.GL_LINES);
             double angle1 = 0, angle2 = Math.PI / 3 * 2, angle3 = -Math.PI / 3 * 2;

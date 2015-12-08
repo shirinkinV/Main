@@ -65,39 +65,6 @@ namespace PlotView
             graphics.functions.Add(func);
         }
 
-        private void OpenGLControl_Resized(object sender, SharpGL.OpenGLEventArgs args)
-        {
-            OpenGL gl = args.OpenGL;
-            gl.Viewport(0, 0, (int)glControl.ActualWidth, (int)glControl.ActualHeight);
-            graphics.height = glControl.ActualHeight - 10;
-            graphics.width = glControl.ActualWidth - 10;
-            graphics.x = -glControl.ActualWidth / 2 + 5;
-            graphics.y = -glControl.ActualHeight / 2 + 5;
-            graphics.centerCoordinateX = 0;
-            graphics.centerCoordinateY = 0;
-            gl.MatrixMode(OpenGL.GL_PROJECTION);
-            gl.LoadIdentity();
-            gl.Ortho((int)(-glControl.ActualWidth / 2), (int)(glControl.ActualWidth / 2), (int)(-glControl.ActualHeight / 2), (int)(glControl.ActualHeight / 2), 0.1, 10);
-        }
-
-        private void OpenGLControl_OpenGLDraw(object sender, SharpGL.OpenGLEventArgs args)
-        {
-            OpenGL gl = args.OpenGL;
-            gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
-            gl.Translate(0, 0, -1);
-            graphics.paint(gl);
-            gl.Flush();
-        }
-
-        private void OpenGLControl_OpenGLInitialized(object sender, SharpGL.OpenGLEventArgs args)
-        {
-            OpenGL gl = args.OpenGL;
-            gl.ClearColor(0.7f, 0.7f, 0.7f, 1);
-            gl.Disable(OpenGL.GL_LIGHTING);
-        }
-
         bool move;
         double cursorX, cursorY;
 
@@ -116,6 +83,39 @@ namespace PlotView
         private void glControl_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             graphics.zoom(e.Delta > 0 ? 1.1 : 0.9);
+        }
+
+        private void OpenGLControl_OpenGLDraw(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
+        {
+            OpenGL gl = args.OpenGL;
+            gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
+            gl.MatrixMode(OpenGL.GL_MODELVIEW);
+            gl.LoadIdentity();
+            gl.Translate(0, 0, -1);
+            graphics.paint(gl);
+            gl.Flush();
+        }
+
+        private void OpenGLControl_OpenGLInitialized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
+        {
+            OpenGL gl = args.OpenGL;
+            gl.ClearColor(0.7f, 0.7f, 0.7f, 1);
+            gl.Disable(OpenGL.GL_LIGHTING);
+        }
+
+        private void OpenGLControl_Resized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
+        {
+            OpenGL gl = args.OpenGL;
+            gl.Viewport(0, 0, (int)glControl.ActualWidth, (int)glControl.ActualHeight);
+            graphics.height = glControl.ActualHeight - 10;
+            graphics.width = glControl.ActualWidth - 10;
+            graphics.x = -glControl.ActualWidth / 2 + 5;
+            graphics.y = -glControl.ActualHeight / 2 + 5;
+            graphics.centerCoordinateX = 0;
+            graphics.centerCoordinateY = 0;
+            gl.MatrixMode(OpenGL.GL_PROJECTION);
+            gl.LoadIdentity();
+            gl.Ortho((int)(-glControl.ActualWidth / 2), (int)(glControl.ActualWidth / 2), (int)(-glControl.ActualHeight / 2), (int)(glControl.ActualHeight / 2), 0.1, 10);
         }
 
         private void glControl_MouseMove(object sender, MouseEventArgs e)

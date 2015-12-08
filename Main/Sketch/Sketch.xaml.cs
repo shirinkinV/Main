@@ -31,7 +31,7 @@ namespace Sketches
             InitializeComponent();
         }
 
-        private void OpenGLControl_Resized(object sender, SharpGL.OpenGLEventArgs args)
+        private void glControl_Resized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
             OpenGL gl = args.OpenGL;
             width = (int)glControl.ActualWidth;
@@ -42,7 +42,7 @@ namespace Sketches
             gl.Ortho(0, (int)(glControl.ActualWidth), 0, glControl.ActualHeight, 0.1, 10);
         }
 
-        private void OpenGLControl_OpenGLDraw(object sender, SharpGL.OpenGLEventArgs args)
+        private void glControl_OpenGLDraw(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
             OpenGL gl = args.OpenGL;
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
@@ -62,7 +62,7 @@ namespace Sketches
             gl.Flush();
         }
 
-        private void OpenGLControl_OpenGLInitialized(object sender, SharpGL.OpenGLEventArgs args)
+        private void glControl_OpenGLInitialized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
             OpenGL gl = args.OpenGL;
             gl.ClearColor(1, 1, 1, 1);

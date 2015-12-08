@@ -9,7 +9,7 @@
              d:DesignHeight="26" d:DesignWidth="28" MinWidth="30" MinHeight="26" MaxWidth="28" MaxHeight="26">
     <Grid>
 
-        <WPF:OpenGLControl x:Name="glControl" Resized="OpenGLControl_Resized" OpenGLDraw="OpenGLControl_OpenGLDraw" OpenGLInitialized="OpenGLControl_OpenGLInitialized" MinWidth="30" MinHeight="26" MaxWidth="32" MaxHeight="26"/>
+        <WPF:OpenGLControl x:Name="glControl" Resized="glControl_Resized" OpenGLDraw="glControl_OpenGLDraw" OpenGLInitialized="glControl_OpenGLInitialized" MinWidth="30" MinHeight="26" MaxWidth="32" MaxHeight="26"/>
 
     </Grid>
 </UserControl>

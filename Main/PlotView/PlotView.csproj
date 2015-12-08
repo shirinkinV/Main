@@ -83,6 +83,24 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Source\Repos\sharpgl\source\SharpGL\Core\SharpGL.SceneGraph\SharpGL.SceneGraph.csproj">
+      <Project>{47bcaa39-edad-4404-b6bd-4742b0abb523}</Project>
+      <Name>SharpGL.SceneGraph</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Source\Repos\sharpgl\source\SharpGL\Core\SharpGL.WPF\SharpGL.WPF.csproj">
+      <Project>{53e67055-13d2-4467-bb57-79589afac2cd}</Project>
+      <Name>SharpGL.WPF</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Source\Repos\sharpgl\source\SharpGL\Core\SharpGL\SharpGL.csproj">
+      <Project>{5ef45533-e2c7-46f2-b4a3-b8f36cd406e0}</Project>
+      <Name>SharpGL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sketch\Sketches.csproj">
+      <Project>{cf6ff195-00b9-4f29-b19a-a70a5aa046ee}</Project>
+      <Name>Sketches</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

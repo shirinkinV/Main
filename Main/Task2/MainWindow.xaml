@@ -13,7 +13,7 @@
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
-        <WPF:OpenGLControl x:Name="capture" Resized="capture_Resized" OpenGLDraw="capture_OpenGLDraw" OpenGLInitialized="capture_OpenGLInitialized"/>
+        <WPF:OpenGLControl x:Name="capture" Resized="capture_Resized_1" OpenGLDraw="capture_OpenGLDraw_1" OpenGLInitialized="capture_OpenGLInitialized_1"/>
 
         <PlotView:PlotView x:Name="plot" Grid.Column="1"/>
         <!--<Label x:Name="label" Content="Label" Grid.Column="1" Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="131"/>-->

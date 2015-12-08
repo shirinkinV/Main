@@ -37,69 +37,9 @@ namespace Task2
             InitializeComponent();              
         }
 
-        private void capture_Resized(object sender, SharpGL.OpenGLEventArgs args)
-        {
-            OpenGL gl = args.OpenGL;
-            gl.Viewport(0, 0, (int)capture.ActualWidth, (int)capture.ActualHeight);
-            gl.MatrixMode(OpenGL.GL_PROJECTION);
-            gl.LoadIdentity();
-            double ratio = capture.ActualWidth / Math.Max(1, capture.ActualHeight);
+        
 
-            gl.Frustum(-0.1*ratio, 0.1*ratio, -0.1, 0.1, 0.1, 10);
-        }
-
-        private void capture_OpenGLDraw(object sender, SharpGL.OpenGLEventArgs args)
-        {
-            if (time == -1)
-            {
-                millis = DateTime.Now.Ticks;
-                time = 0;
-            }
-            else
-            {
-                long newMillis = DateTime.Now.Ticks;
-                time += 0.1*(double)(newMillis - millis) / 1000000;
-                millis = newMillis;
-                while (time > T)  
-                    time -= T;
-            }
-
-            OpenGL gl = args.OpenGL;
-            gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
-            gl.Translate(0, 0, -2);
-            gl.Rotate(45, 1, 0, 0);
-
-            gl.LineWidth(2);
-            gl.Color(1.0, 0, 0);
-            drawCircle(gl, R, 1 - x1_func(time));
-
-            gl.LineWidth(1);
-            gl.Color(0.0, 0, 1);
-            drawCircle(gl, 0.01, 1 - x2_func(time));
-
-            gl.Color(0, 0, 0);
-            gl.Begin(OpenGL.GL_LINES);
-            double angle1 = 0,angle2=Math.PI/3*2,angle3=-Math.PI / 3 * 2;
-            gl.Vertex4d(0.01 * Math.Cos(angle1), 1, 0.01 * Math.Sin(angle1), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle1), 1 - x2_func(time), 0.01 * Math.Sin(angle1), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle2), 1, 0.01 * Math.Sin(angle2), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle2), 1 - x2_func(time), 0.01 * Math.Sin(angle2), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle3), 1, 0.01 * Math.Sin(angle3), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle3), 1 - x2_func(time), 0.01 * Math.Sin(angle3), 1);
-
-            gl.Vertex4d(R * Math.Cos(angle1), 1- x1_func(time), R * Math.Sin(angle1), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle1), 1 - x2_func(time), 0.01 * Math.Sin(angle1), 1);
-            gl.Vertex4d(R * Math.Cos(angle2), 1- x1_func(time), R * Math.Sin(angle2), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle2), 1 - x2_func(time), 0.01 * Math.Sin(angle2), 1);
-            gl.Vertex4d(R * Math.Cos(angle3), 1- x1_func(time), R * Math.Sin(angle3), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle3), 1 - x2_func(time), 0.01 * Math.Sin(angle3), 1);
-
-            gl.End();
-
-            gl.Flush();
-        }
+        
 
         void drawCircle(OpenGL gl, double radius, double y)
         {
@@ -109,14 +49,6 @@ namespace Task2
                 gl.Vertex4d(radius*Math.Cos(Math.PI/180*i*2), y, radius * Math.Sin(Math.PI / 180 * i*2), 1);
             }
             gl.End();
-        }
-
-        private void capture_OpenGLInitialized(object sender, SharpGL.OpenGLEventArgs args)
-        {
-            OpenGL gl = args.OpenGL;
-            gl.ClearColor(1, 1, 1, 1);
-            gl.Disable(OpenGL.GL_LIGHTING);
-            init();
         }
 
         void init()
@@ -147,6 +79,78 @@ namespace Task2
             plot.addFunction(new PlotView.FunctionAppearance(t => x2ont(
                 x1_func(t), x2_func(t), MathNet.Numerics.Differentiate.DerivativeFunc(x1_func, 1)(t)
                 ), 0x00ffff, 0, T, 2, 0xffff), "x2'");
+        }
+
+        private void capture_Resized_1(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
+        {
+            OpenGL gl = args.OpenGL;
+            gl.Viewport(0, 0, (int)capture.ActualWidth, (int)capture.ActualHeight);
+            gl.MatrixMode(OpenGL.GL_PROJECTION);
+            gl.LoadIdentity();
+            double ratio = capture.ActualWidth / Math.Max(1, capture.ActualHeight);
+
+            gl.Frustum(-0.1 * ratio, 0.1 * ratio, -0.1, 0.1, 0.1, 10);
+        }
+
+        private void capture_OpenGLDraw_1(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
+        {
+            if (time == -1)
+            {
+                millis = DateTime.Now.Ticks;
+                time = 0;
+            }
+            else
+            {
+                long newMillis = DateTime.Now.Ticks;
+                time += 0.1 * (double)(newMillis - millis) / 1000000;
+                millis = newMillis;
+                while (time > T)
+                    time -= T;
+            }
+
+            OpenGL gl = args.OpenGL;
+            gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
+            gl.MatrixMode(OpenGL.GL_MODELVIEW);
+            gl.LoadIdentity();
+            gl.Translate(0, 0, -2);
+            gl.Rotate(45, 1, 0, 0);
+
+            gl.LineWidth(2);
+            gl.Color(1.0, 0, 0);
+            drawCircle(gl, R, 1 - x1_func(time));
+
+            gl.LineWidth(1);
+            gl.Color(0.0, 0, 1);
+            drawCircle(gl, 0.01, 1 - x2_func(time));
+
+            gl.Color(0, 0, 0);
+            gl.Begin(OpenGL.GL_LINES);
+            double angle1 = 0, angle2 = Math.PI / 3 * 2, angle3 = -Math.PI / 3 * 2;
+            gl.Vertex4d(0.01 * Math.Cos(angle1), 1, 0.01 * Math.Sin(angle1), 1);
+            gl.Vertex4d(0.01 * Math.Cos(angle1), 1 - x2_func(time), 0.01 * Math.Sin(angle1), 1);
+            gl.Vertex4d(0.01 * Math.Cos(angle2), 1, 0.01 * Math.Sin(angle2), 1);
+            gl.Vertex4d(0.01 * Math.Cos(angle2), 1 - x2_func(time), 0.01 * Math.Sin(angle2), 1);
+            gl.Vertex4d(0.01 * Math.Cos(angle3), 1, 0.01 * Math.Sin(angle3), 1);
+            gl.Vertex4d(0.01 * Math.Cos(angle3), 1 - x2_func(time), 0.01 * Math.Sin(angle3), 1);
+
+            gl.Vertex4d(R * Math.Cos(angle1), 1 - x1_func(time), R * Math.Sin(angle1), 1);
+            gl.Vertex4d(0.01 * Math.Cos(angle1), 1 - x2_func(time), 0.01 * Math.Sin(angle1), 1);
+            gl.Vertex4d(R * Math.Cos(angle2), 1 - x1_func(time), R * Math.Sin(angle2), 1);
+            gl.Vertex4d(0.01 * Math.Cos(angle2), 1 - x2_func(time), 0.01 * Math.Sin(angle2), 1);
+            gl.Vertex4d(R * Math.Cos(angle3), 1 - x1_func(time), R * Math.Sin(angle3), 1);
+            gl.Vertex4d(0.01 * Math.Cos(angle3), 1 - x2_func(time), 0.01 * Math.Sin(angle3), 1);
+
+            gl.End();
+
+            gl.Flush();
+        }
+
+        private void capture_OpenGLInitialized_1(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
+        {
+            OpenGL gl = args.OpenGL;
+            gl.ClearColor(1, 1, 1, 1);
+            gl.Disable(OpenGL.GL_LIGHTING);
+            init();
         }
     }
 }

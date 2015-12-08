@@ -38,22 +38,6 @@
     <Reference Include="MathNet.Numerics">
       <HintPath>..\..\MathNet.Numerics.dll</HintPath>
     </Reference>
-    <Reference Include="PlotView, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Documents\GitHubVisualStudio\Plot\PlotView\bin\Debug\PlotView.dll</HintPath>
-    </Reference>
-    <Reference Include="RungeKuttaMethod">
-      <HintPath>..\..\..\..\..\Documents\GitHubVisualStudio\RungeKuttaMethod\RungeKuttaMethod\RungeKuttaMethod\bin\Debug\RungeKuttaMethod.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpGL">
-      <HintPath>..\..\SharpGL.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpGL.WPF">
-      <HintPath>..\..\SharpGL.WPF.dll</HintPath>
-    </Reference>
-    <Reference Include="Sketch">
-      <HintPath>..\..\..\..\..\Documents\GitHubVisualStudio\Plot\PlotView\bin\Debug\Sketch.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />

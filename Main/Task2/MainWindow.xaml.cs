@@ -199,35 +199,36 @@ namespace Task2
             gl.Translate(0, -0, -2);
             gl.Rotate(10, 1, 0, 0);
 
-            gl.LineWidth(2);
-            gl.Color(1.0, 0, 0);
-            drawCircle(gl, R, 1 - x3_func(time));
-                
-            gl.Color(0.0, 1, 1);
-            drawCircle(gl, 0.01, 1 - x2_func(time));
-
-            gl.Color(0.0, 0, 1);
-            drawSpring(gl, 0.05, 1 + dist, 1 - x1_func(time));
-
             gl.LineWidth(1);
             gl.Color(0, 0, 0);
             gl.Begin(OpenGL.GL_LINES);
             double angle1 = 0, angle2 = Math.PI / 3 * 2, angle3 = -Math.PI / 3 * 2;
-            gl.Vertex4d(0.01 * Math.Cos(angle1), 1 - x1_func(time), 0.01 * Math.Sin(angle1), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle1), 1 - x2_func(time), 0.01 * Math.Sin(angle1), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle2), 1 - x1_func(time), 0.01 * Math.Sin(angle2), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle2), 1 - x2_func(time), 0.01 * Math.Sin(angle2), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle3), 1 - x1_func(time), 0.01 * Math.Sin(angle3), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle3), 1 - x2_func(time), 0.01 * Math.Sin(angle3), 1);
+            gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x1_func(time), 0.05 * Math.Sin(angle1), 1);
+            gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x2_func(time), 0.05 * Math.Sin(angle1), 1);
+            gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x1_func(time), 0.05 * Math.Sin(angle2), 1);
+            gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x2_func(time), 0.05 * Math.Sin(angle2), 1);
+            gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x1_func(time), 0.05 * Math.Sin(angle3), 1);
+            gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x2_func(time), 0.05 * Math.Sin(angle3), 1);
 
             gl.Vertex4d(R * Math.Cos(angle1), 1 - x3_func(time), R * Math.Sin(angle1), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle1), 1 - x2_func(time), 0.01 * Math.Sin(angle1), 1);
+            gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x2_func(time), 0.05 * Math.Sin(angle1), 1);
             gl.Vertex4d(R * Math.Cos(angle2), 1 - x3_func(time), R * Math.Sin(angle2), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle2), 1 - x2_func(time), 0.01 * Math.Sin(angle2), 1);
+            gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x2_func(time), 0.05 * Math.Sin(angle2), 1);
             gl.Vertex4d(R * Math.Cos(angle3), 1 - x3_func(time), R * Math.Sin(angle3), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle3), 1 - x2_func(time), 0.01 * Math.Sin(angle3), 1);
+            gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x2_func(time), 0.05 * Math.Sin(angle3), 1);
 
             gl.End();
+
+            gl.LineWidth(2);
+            gl.Color(1.0, 0, 0);
+            drawCircle(gl, R, 1 - x3_func(time));
+
+            gl.Color(0.0, 1, 0);
+            drawCircle(gl, 0.05, 1 - x2_func(time));
+
+            gl.LineWidth(1);
+            gl.Color(0.0, 0, 1);
+            drawSpring(gl, 0.05, 1 + dist, 1 - x1_func(time));
 
             gl.Flush();
         }

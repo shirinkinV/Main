@@ -13,13 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task2", "Task2\Task2.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionsAndParsing", "FunctionsAndParsing\FunctionsAndParsing.csproj", "{859450FB-44E9-4927-9B85-7D6D20BB8320}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpGL", "..\..\..\..\Source\Repos\sharpgl\source\SharpGL\Core\SharpGL\SharpGL.csproj", "{5EF45533-E2C7-46F2-B4A3-B8F36CD406E0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpGL.WPF", "..\..\..\..\Source\Repos\sharpgl\source\SharpGL\Core\SharpGL.WPF\SharpGL.WPF.csproj", "{53E67055-13D2-4467-BB57-79589AFAC2CD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Numerics", "..\..\..\..\Source\Repos\mathnet-numerics\src\Numerics\Numerics.csproj", "{B7CAE5F4-A23F-4438-B5BE-41226618B695}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpGL.SceneGraph", "..\..\..\..\Source\Repos\sharpgl\source\SharpGL\Core\SharpGL.SceneGraph\SharpGL.SceneGraph.csproj", "{47BCAA39-EDAD-4404-B6BD-4742B0ABB523}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task1", "Task1\Task1.csproj", "{DEB3CD32-9E07-4153-9DB9-07F6B42D6D44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,30 +52,12 @@ Global
 		{859450FB-44E9-4927-9B85-7D6D20BB8320}.Release|Any CPU.Build.0 = Release|Any CPU
 		{859450FB-44E9-4927-9B85-7D6D20BB8320}.Release-Signed|Any CPU.ActiveCfg = Release|Any CPU
 		{859450FB-44E9-4927-9B85-7D6D20BB8320}.Release-Signed|Any CPU.Build.0 = Release|Any CPU
-		{5EF45533-E2C7-46F2-B4A3-B8F36CD406E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5EF45533-E2C7-46F2-B4A3-B8F36CD406E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5EF45533-E2C7-46F2-B4A3-B8F36CD406E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5EF45533-E2C7-46F2-B4A3-B8F36CD406E0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5EF45533-E2C7-46F2-B4A3-B8F36CD406E0}.Release-Signed|Any CPU.ActiveCfg = Release|Any CPU
-		{5EF45533-E2C7-46F2-B4A3-B8F36CD406E0}.Release-Signed|Any CPU.Build.0 = Release|Any CPU
-		{53E67055-13D2-4467-BB57-79589AFAC2CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{53E67055-13D2-4467-BB57-79589AFAC2CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{53E67055-13D2-4467-BB57-79589AFAC2CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{53E67055-13D2-4467-BB57-79589AFAC2CD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{53E67055-13D2-4467-BB57-79589AFAC2CD}.Release-Signed|Any CPU.ActiveCfg = Release|Any CPU
-		{53E67055-13D2-4467-BB57-79589AFAC2CD}.Release-Signed|Any CPU.Build.0 = Release|Any CPU
-		{B7CAE5F4-A23F-4438-B5BE-41226618B695}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7CAE5F4-A23F-4438-B5BE-41226618B695}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7CAE5F4-A23F-4438-B5BE-41226618B695}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7CAE5F4-A23F-4438-B5BE-41226618B695}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B7CAE5F4-A23F-4438-B5BE-41226618B695}.Release-Signed|Any CPU.ActiveCfg = Release-Signed|Any CPU
-		{B7CAE5F4-A23F-4438-B5BE-41226618B695}.Release-Signed|Any CPU.Build.0 = Release-Signed|Any CPU
-		{47BCAA39-EDAD-4404-B6BD-4742B0ABB523}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{47BCAA39-EDAD-4404-B6BD-4742B0ABB523}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{47BCAA39-EDAD-4404-B6BD-4742B0ABB523}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{47BCAA39-EDAD-4404-B6BD-4742B0ABB523}.Release|Any CPU.Build.0 = Release|Any CPU
-		{47BCAA39-EDAD-4404-B6BD-4742B0ABB523}.Release-Signed|Any CPU.ActiveCfg = Release|Any CPU
-		{47BCAA39-EDAD-4404-B6BD-4742B0ABB523}.Release-Signed|Any CPU.Build.0 = Release|Any CPU
+		{DEB3CD32-9E07-4153-9DB9-07F6B42D6D44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEB3CD32-9E07-4153-9DB9-07F6B42D6D44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEB3CD32-9E07-4153-9DB9-07F6B42D6D44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEB3CD32-9E07-4153-9DB9-07F6B42D6D44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEB3CD32-9E07-4153-9DB9-07F6B42D6D44}.Release-Signed|Any CPU.ActiveCfg = Release|Any CPU
+		{DEB3CD32-9E07-4153-9DB9-07F6B42D6D44}.Release-Signed|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

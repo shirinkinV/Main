@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Sketch.Properties {
+namespace Sketches.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

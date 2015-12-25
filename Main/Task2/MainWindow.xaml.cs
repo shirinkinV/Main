@@ -158,7 +158,7 @@ namespace Task2
             plot.addFunction(new PlotView.FunctionAppearance(x1_func, 0x0000ff, 0, T, 2, 0xffff), "x1");
             plot.addFunction(new PlotView.FunctionAppearance(x2_func, 0x00ff00, 0, T, 2, 0xffff), "x2");
             plot.addFunction(new PlotView.FunctionAppearance(x3_func, 0xff0000, 0, T, 2, 0xffff), "x3");
-            plot.addFunction(new PlotView.FunctionAppearance(P, 0xffff00, 0, T, 2, 0xffff), "P");
+            plot.addFunction(new PlotView.FunctionAppearance(P, 0xffff00, 0, T, 2, 0xffff), "П");
             plot.addFunction(new PlotView.FunctionAppearance(K, 0x00ffff, 0, T, 2, 0xffff), "T");
             plot.addFunction(new PlotView.FunctionAppearance(E, 0xff00ff, 0, T, 2, 0xffff), "E");
 

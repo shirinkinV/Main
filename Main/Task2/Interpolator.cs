@@ -9,13 +9,13 @@ namespace Task2
 {
     public class Interpolator
     {
-        public static Func<double, double> interpolate(List<RungeKuttaMethod.Method.ValueAndArgument> list)
+        public static Func<double, double> interpolate(List<RungeKuttaMethod.Method.ValueAndArgument> list, int index)
         {
             double[] values = new double[list.Count];
             double[] arguments = new double[list.Count];
             for (int i = 0; i < list.Count; i++)
             {
-                values[i] = list[i].value[0];
+                values[i] = list[i].value[index];
                 arguments[i] = list[i].argument;
             }
             CubicSpline spline = CubicSpline.InterpolateAkima(arguments, values);

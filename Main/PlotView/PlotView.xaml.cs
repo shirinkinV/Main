@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SharpGL;
-using Sketches;
+using Sketches; 
 
 namespace PlotView
 {
@@ -46,7 +46,7 @@ namespace PlotView
             label.Margin = new Thickness(45, y, 0, 0);
             names.Add(label);
             grid.Children.Add(label);
-            Sketch sketch = new Sketch();
+            Sketches.Sketch sketch = new Sketches.Sketch();
             sketch.draw = gl => {
                 gl.Color((float)(func.color >> 16 & 0xff) / 255, (float)(func.color >> 8 & 0xff) / 255, (float)(func.color & 0xff) / 255);
                 gl.LineWidth(func.lineWidth);

@@ -12,7 +12,7 @@ namespace PlotView
 
         public double x = -1, y = -1, width = 2, height = 2;
         public List<FunctionAppearance> functions = new List<FunctionAppearance>();
-        public double unitsProPixel = 0.10;
+        public double unitsProPixel = 0.01;
         public double centerCoordinateX;
         public double centerCoordinateY;
 

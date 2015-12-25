@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphicsForFunctions", "GraphicsForFunctions\GraphicsForFunctions.csproj", "{02F3ECD0-B8DD-4E9A-AC28-FFF3BECBCB99}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sketches", "Sketch\Sketches.csproj", "{CF6FF195-00B9-4F29-B19A-A70A5AA046EE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlotView", "PlotView\PlotView.csproj", "{087D235D-AF98-442C-B50A-A1EE69B9491B}"
@@ -30,12 +28,6 @@ Global
 		Release-Signed|Any CPU = Release-Signed|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{02F3ECD0-B8DD-4E9A-AC28-FFF3BECBCB99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{02F3ECD0-B8DD-4E9A-AC28-FFF3BECBCB99}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{02F3ECD0-B8DD-4E9A-AC28-FFF3BECBCB99}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{02F3ECD0-B8DD-4E9A-AC28-FFF3BECBCB99}.Release|Any CPU.Build.0 = Release|Any CPU
-		{02F3ECD0-B8DD-4E9A-AC28-FFF3BECBCB99}.Release-Signed|Any CPU.ActiveCfg = Release|Any CPU
-		{02F3ECD0-B8DD-4E9A-AC28-FFF3BECBCB99}.Release-Signed|Any CPU.Build.0 = Release|Any CPU
 		{CF6FF195-00B9-4F29-B19A-A70A5AA046EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CF6FF195-00B9-4F29-B19A-A70A5AA046EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF6FF195-00B9-4F29-B19A-A70A5AA046EE}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -22,15 +22,20 @@ namespace Task2
     /// </summary>
     public partial class MainWindow : Window
     {
-        double R=0.5;
-        double alpha_0=Math.PI/2.7;
-        double l = 2;
+        double R=1;
+        double alpha_0=Math.PI/3;
+        double l = 4;
         double g = 9.8;
+        double m = 1;
+        double c = 100;
         Func<double, double> x1_func;
         Func<double, double> x2_func;
+        Func<double, double> x3_func;
         double T;
         double time=-1;
-        long millis = 0;
+        long ticks = 0;
+        double dist = 0;
+       
 
         public MainWindow()
         {
@@ -51,34 +56,112 @@ namespace Task2
             gl.End();
         }
 
+        void drawSpring(OpenGL gl, double radius, double y1,double y2)
+        {
+            gl.Begin(OpenGL.GL_LINE_STRIP);
+            for (int i = 0; i < 900; i++)
+            {
+                gl.Vertex4d(radius * Math.Cos(Math.PI / 180 * i * 4), (double)(y1+(y2- y1)/900*i), radius * Math.Sin(Math.PI / 180 * i * 4), 1);
+            }
+            gl.End();
+        }
+
         void init()
         {
-            Func<double, double, double, double, double, double> d2x1ondt2 = (q_var, x1ont, x2ont_var, x1, x2_var) => (q_var * (x1ont - 2 * x2ont_var) * x1ont + g * (1 - q_var) * (x1 - l)) / (x1 - l - q_var * (x1 - x2_var));
-            Func<double, double> x2 = x1 => (l * l - R * R - x1 * x1) / (2 * (l - x1));
-            Func<double, double, double, double> x2ont = (x1, x2_var, x1ont) => x1ont * (x1 - x2_var) / (x1 - l);
-            Func<double, double, double> sin_alpha = (x1, x2_var) => (x1 - x2_var) / Math.Sqrt((x1 - x2_var) * (x1 - x2_var) + R * R);
-            Func<double, double> q = sin_alpha_var => sin_alpha_var / (1 - sin_alpha_var);
-            Func<double, double, double> f = (x1, x1ont) => d2x1ondt2(q(sin_alpha(x1, x2(x1))), x1ont, x2ont(x1, x2(x1), x1ont), x1, x2(x1));
-            double x1_0 = (l - R / Math.Cos(alpha_0)) + R * Math.Tan(alpha_0);
-            double x1ont_0 = 0;
-            x1_func = Interpolator.interpolate(Method.integrateEquationVector(
-                new Method.ValueAndArgument(new double[] { x1_0, x1ont_0 }, 0),
-                (t, x) => new double[] { x[1], f(x[0], x[1]) },
-                1e-7, value => {
+            var Rsquare = R * R;
+            //x1 - x[0], x1' - x[1], x3 - x[2], x3' - x[3]
+            Func<double, double[], double[]> system = (t, x) =>
+               {
+                   var x3 = x[2];
+                   var x3der = x[3];      
+                   var x1der = x[1]; 
+                   var x1 = x[0];
+
+                   var p1 = l + x1 - x3;
+                   var p2 = x1der - x3der;     
+                   var p1cube = p1 * p1 * p1;
+                   var p1square = p1 * p1;
+
+                   var x2 = 0.5 * (l + x1 + x3) - Rsquare / (2 * p1);
+                   var x2der = 0.5 * (x1der + x3der) - Rsquare * p2 / (2 * p1square);
+                   var x2deronx1 = -Rsquare * p2 / p1cube;
+                   var x2deronx3 = -x2deronx1;
+                   var x2onx1 = 0.5 + Rsquare / (2 * p1square);
+                   var x2onx3 = 0.5 - Rsquare / (2 * p1square);
+                   var x2deronx1der = x2onx1;
+                   var x2deronx3der = x2onx3;
+                   var ddtx2deronx1der = -Rsquare*p2/p1cube;
+                   var ddtx2deronx3der = -ddtx2deronx1der;
+
+                   var p4 = x2onx1;
+                   var p5 = p4 * x2deronx3der;
+                   var p6 = p4 * x2deronx1der;
+                   var p7 = x2onx3;
+                   var p8 = 1 + x2deronx3der * p7;
+                   var p9 = x2deronx1der * p7;
+                   var p10 = Rsquare * p2 * p2 / p1cube * x2deronx3der - x2der * ddtx2deronx3der + x2der * x2deronx3 + g * (1 + x2onx3);
+                   var p11 = Rsquare * p2 * p2 / p1cube * x2deronx1der - x2der * ddtx2deronx1der + x2der * x2deronx1 - c / m * x1 + g * x2onx1;
+                   var p12 = (p5 * p11 - p6 * p10) / (p5*p9-p6*p8);
+                   var p13 = (p10 - p8 * p12) / p5;
+
+                   return new double[] { x[1], p13, x[3], p12 };
+               };
+
+            double x10 = dist;
+            double x1d0 = 0;
+            double x30 = (l - R / Math.Cos(alpha_0)) + R * Math.Tan(alpha_0);
+            double x3d0 = 0;
+
+            List<Method.ValueAndArgument> list = Method.integrateEquationVector(
+                new Method.ValueAndArgument(new double[] { x10, x1d0, x30, x3d0 }, 0), system, 1e-5,
+                value =>
+                {
                     T = value.argument;
-                    if (Method.difference(value.value, new double[] { x1_0, x1ont_0 }) < 1e-5 && T > 1e-4)
+                    /*if (Method.difference(value.value, new double[] { x10, x1d0, x30, x3d0 }) < 1e-3 && T > 1e-4)
                         return false;
                     else
-                        return true;
-                }));
-            x2_func = t => x2(x1_func(t));
-            //label.Content = "" + (Math.Abs(x_func(0.4)-x_func(0)))+'\n'+t1;
-            plot.addFunction(new PlotView.FunctionAppearance(x1_func, 0xff0000, 0, T, 2, 0xffff), "x1");
-            plot.addFunction(new PlotView.FunctionAppearance(x2_func, 0x0000ff, 0, T, 2, 0xffff), "x2");
-            plot.addFunction(new PlotView.FunctionAppearance(MathNet.Numerics.Differentiate.DerivativeFunc(x1_func, 1), 0x00ff00, 0, T, 2, 0xffff), "x1'");
-            plot.addFunction(new PlotView.FunctionAppearance(t => x2ont(
-                x1_func(t), x2_func(t), MathNet.Numerics.Differentiate.DerivativeFunc(x1_func, 1)(t)
-                ), 0x00ffff, 0, T, 2, 0xffff), "x2'");
+                        return true; */
+                    //if (Method.difference(value.value,new double[] { 0,0,0,0})>1000||
+                    //Double.IsNaN(value.value[0])||double.IsInfinity(value.value[0]))
+                    //    return false;
+                    return T <= 20;
+                }, 0.001);
+
+            x1_func = Interpolator.interpolate(list, 0);
+            Func<double, double> x1_der = Interpolator.interpolate(list, 1);
+            x3_func = Interpolator.interpolate(list, 2);
+            Func<double, double> x3_der = Interpolator.interpolate(list, 3);
+            x2_func = t => 0.5 * (l + x1_func(t) + x3_func(t)) - Rsquare / (2 * (l + x1_func(t) - x3_func(t)));
+
+            Func<double, double> x2_der = t =>
+            {
+                var x1der = x1_der(t);
+                var x3der = x3_der(t);
+                var x1 = x1_func(t);
+                var x3 = x3_func(t); 
+                return 0.5 * (x1der + x3der) + Rsquare * (x1der - x3der) / (2 * (l + x1 - x3)*(l+x1- x3));
+            };
+            double P0 = -g * m * (x2_func(0) + x3_func(0))+0.5*c*x1_func(0)*x2_func(0);
+            Func<double, double> P = t =>
+            {
+                var x1 = x1_func(t);
+                return -m * g * (x2_func(t) + x3_func(t)) + 0.5*c * x1 * x1 - P0;
+            };
+            Func<double,double> K = t =>
+            {                          
+                var x2der = x2_der(t);
+                var x3der = x3_der(t);   
+                return 0.5 * m * (x2der*x2der+x3der*x3der);
+            };
+            Func<double, double> E = t => P(t) + K(t); ;
+            
+            plot.addFunction(new PlotView.FunctionAppearance(x1_func, 0x0000ff, 0, T, 2, 0xffff), "x1");
+            plot.addFunction(new PlotView.FunctionAppearance(x2_func, 0x00ff00, 0, T, 2, 0xffff), "x2");
+            plot.addFunction(new PlotView.FunctionAppearance(x3_func, 0xff0000, 0, T, 2, 0xffff), "x3");
+            plot.addFunction(new PlotView.FunctionAppearance(P, 0xffff00, 0, T, 2, 0xffff), "P");
+            plot.addFunction(new PlotView.FunctionAppearance(K, 0x00ffff, 0, T, 2, 0xffff), "T");
+            plot.addFunction(new PlotView.FunctionAppearance(E, 0xff00ff, 0, T, 2, 0xffff), "E");
+
         }
 
         private void capture_Resized_1(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
@@ -90,21 +173,21 @@ namespace Task2
             double ratio = capture.ActualWidth / Math.Max(1, capture.ActualHeight);
 
             //gl.Frustum(-0.1 * ratio, 0.1 * ratio, -0.1, 0.1, 0.1, 10);
-            gl.Ortho(-1.1 * ratio, 1.1 * ratio, -1.1, 1.1, 0.1,10);
+            gl.Ortho(-6 * ratio, 6 * ratio, -6, 6, 0.5,10);
         }
 
         private void capture_OpenGLDraw_1(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
             if (time == -1)
             {
-                millis = DateTime.Now.Ticks;
+                ticks = DateTime.Now.Ticks;
                 time = 0;
             }
             else
             {
-                long newMillis = DateTime.Now.Ticks;
-                time += 0.1 * (double)(newMillis - millis) / 1000000;
-                millis = newMillis;
+                long newTicks = DateTime.Now.Ticks;
+                time += 1 * (double)(newTicks - ticks) / 10000000;
+                ticks = newTicks;
                 while (time > T)
                     time -= T;
             }
@@ -113,32 +196,35 @@ namespace Task2
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             gl.LoadIdentity();
-            gl.Translate(0, 0, -2);
+            gl.Translate(0, -0, -2);
             gl.Rotate(10, 1, 0, 0);
 
             gl.LineWidth(2);
             gl.Color(1.0, 0, 0);
-            drawCircle(gl, R, 1 - x1_func(time));
+            drawCircle(gl, R, 1 - x3_func(time));
                 
-            gl.Color(0.0, 0, 1);
+            gl.Color(0.0, 1, 1);
             drawCircle(gl, 0.01, 1 - x2_func(time));
+
+            gl.Color(0.0, 0, 1);
+            drawSpring(gl, 0.05, 1 + dist, 1 - x1_func(time));
 
             gl.LineWidth(1);
             gl.Color(0, 0, 0);
             gl.Begin(OpenGL.GL_LINES);
             double angle1 = 0, angle2 = Math.PI / 3 * 2, angle3 = -Math.PI / 3 * 2;
-            gl.Vertex4d(0.01 * Math.Cos(angle1), 1, 0.01 * Math.Sin(angle1), 1);
+            gl.Vertex4d(0.01 * Math.Cos(angle1), 1 - x1_func(time), 0.01 * Math.Sin(angle1), 1);
             gl.Vertex4d(0.01 * Math.Cos(angle1), 1 - x2_func(time), 0.01 * Math.Sin(angle1), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle2), 1, 0.01 * Math.Sin(angle2), 1);
+            gl.Vertex4d(0.01 * Math.Cos(angle2), 1 - x1_func(time), 0.01 * Math.Sin(angle2), 1);
             gl.Vertex4d(0.01 * Math.Cos(angle2), 1 - x2_func(time), 0.01 * Math.Sin(angle2), 1);
-            gl.Vertex4d(0.01 * Math.Cos(angle3), 1, 0.01 * Math.Sin(angle3), 1);
+            gl.Vertex4d(0.01 * Math.Cos(angle3), 1 - x1_func(time), 0.01 * Math.Sin(angle3), 1);
             gl.Vertex4d(0.01 * Math.Cos(angle3), 1 - x2_func(time), 0.01 * Math.Sin(angle3), 1);
 
-            gl.Vertex4d(R * Math.Cos(angle1), 1 - x1_func(time), R * Math.Sin(angle1), 1);
+            gl.Vertex4d(R * Math.Cos(angle1), 1 - x3_func(time), R * Math.Sin(angle1), 1);
             gl.Vertex4d(0.01 * Math.Cos(angle1), 1 - x2_func(time), 0.01 * Math.Sin(angle1), 1);
-            gl.Vertex4d(R * Math.Cos(angle2), 1 - x1_func(time), R * Math.Sin(angle2), 1);
+            gl.Vertex4d(R * Math.Cos(angle2), 1 - x3_func(time), R * Math.Sin(angle2), 1);
             gl.Vertex4d(0.01 * Math.Cos(angle2), 1 - x2_func(time), 0.01 * Math.Sin(angle2), 1);
-            gl.Vertex4d(R * Math.Cos(angle3), 1 - x1_func(time), R * Math.Sin(angle3), 1);
+            gl.Vertex4d(R * Math.Cos(angle3), 1 - x3_func(time), R * Math.Sin(angle3), 1);
             gl.Vertex4d(0.01 * Math.Cos(angle3), 1 - x2_func(time), 0.01 * Math.Sin(angle3), 1);
 
             gl.End();

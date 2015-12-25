@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Task2</RootNamespace>
     <AssemblyName>Task2</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -39,9 +39,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MathNet.Numerics">
-      <HintPath>..\..\MathNet.Numerics.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -101,9 +98,15 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Source\Repos\mathnet-numerics\src\Numerics\Numerics.csproj">
+      <Project>{b7cae5f4-a23f-4438-b5be-41226618b695}</Project>
+      <Name>Numerics</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Source\Repos\sharpgl\source\SharpGL\Core\SharpGL.SceneGraph\SharpGL.SceneGraph.csproj">
       <Project>{47bcaa39-edad-4404-b6bd-4742b0abb523}</Project>
       <Name>SharpGL.SceneGraph</Name>

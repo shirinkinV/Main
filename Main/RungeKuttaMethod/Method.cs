@@ -98,7 +98,7 @@ namespace RungeKuttaMethod
             List<double>[] values = new List<double>[begin.Length];
             for (int i = 0; i < values.Length; i++)
                 values[i] = new List<double>();
-            double h = 0.00001;
+            double h = 0.0001;
 
             for (int i = 0; i < values.Length; i++)
             {
@@ -267,29 +267,52 @@ namespace RungeKuttaMethod
                 new double[] { 1.0 / 6, 1.0 / 3, 1.0 / 3, 1.0 / 6 });
         }
 
-        public static List<ValueAndArgument> integrateEquationVector(ValueAndArgument begin, Func<double, double[], double[]> system, double epsilon, Func<ValueAndArgument,bool> condition)
+        public static List<ValueAndArgument> integrateEquationVector(ValueAndArgument begin, Func<double, double[], double[]> system, double epsilon, Func<ValueAndArgument,bool> condition, double dataStep)
         {
             List<ValueAndArgument> result = new List<ValueAndArgument>();
             result.Add(begin);
             ValueAndArgument current = begin;
             double h = 0.00001;
+            double step = 0;
             while (condition(current))
             {
                 ValueAndArgument y2h = nextStepVector4order(h, current, system);
                 ValueAndArgument yh = nextStepVector4order(h / 2, current, system);
                 if (difference(y2h.value, yh.value) / 15 < epsilon)
                 {
+                    step += h;
                     if (difference(y2h.value, yh.value) / 15 < 0.5 * epsilon) 
                     {
-                        h *= 1.2;
+                        h *= 1.01;
                     }
-                    result.Add(y2h);
+                    
+                    if (step > dataStep)
+                    {
+                        result.Add(y2h);
+                        step = 0;
+                    }
+                    
                     current = y2h;
                 }
                 else
                 {
                     h *= 0.9;
                 }
+            }
+            return result;
+        }
+
+        public static List<ValueAndArgument> integrateEquationVector(ValueAndArgument begin, Func<double, double[], double[]> system, Func<ValueAndArgument, bool> condition)
+        {
+            List<ValueAndArgument> result = new List<ValueAndArgument>();
+            result.Add(begin);
+            ValueAndArgument current = begin;
+            double h = 0.0000001;
+            while (condition(current))
+            {
+                ValueAndArgument yh = nextStepVector4order(h, current, system);
+                current = yh;
+                result.Add(yh);
             }
             return result;
         }

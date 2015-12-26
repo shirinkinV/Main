@@ -35,7 +35,14 @@ namespace Task2
         double time=-1;
         long ticks = 0;
         double dist = 0;
-       
+        double epsilon = 1e-5;
+        bool initialized = true;
+        double period = 20;
+
+        Func<double, double> P;
+        Func<double, double> K;
+        Func<double, double> E;
+
 
         public MainWindow()
         {
@@ -68,6 +75,8 @@ namespace Task2
 
         void init()
         {
+            if(initialized== false) { return; }
+            initialized = false;
             var Rsquare = R * R;
             //x1 - x[0], x1' - x[1], x3 - x[2], x3' - x[3]
             Func<double, double[], double[]> system = (t, x) =>
@@ -113,7 +122,7 @@ namespace Task2
             double x3d0 = 0;
 
             List<Method.ValueAndArgument> list = Method.integrateEquationVector(
-                new Method.ValueAndArgument(new double[] { x10, x1d0, x30, x3d0 }, 0), system, 1e-5,
+                new Method.ValueAndArgument(new double[] { x10, x1d0, x30, x3d0 }, 0), system, epsilon,
                 value =>
                 {
                     T = value.argument;
@@ -124,7 +133,7 @@ namespace Task2
                     //if (Method.difference(value.value,new double[] { 0,0,0,0})>1000||
                     //Double.IsNaN(value.value[0])||double.IsInfinity(value.value[0]))
                     //    return false;
-                    return T <= 20;
+                    return T <= period;
                 }, 0.001);
 
             x1_func = Interpolator.interpolate(list, 0);
@@ -142,26 +151,35 @@ namespace Task2
                 return 0.5 * (x1der + x3der) + Rsquare * (x1der - x3der) / (2 * (l + x1 - x3)*(l+x1- x3));
             };
             double P0 = -g * m * (x2_func(0) + x3_func(0))+0.5*c*x1_func(0)*x2_func(0);
-            Func<double, double> P = t =>
+            P = t =>
             {
                 var x1 = x1_func(t);
                 return -m * g * (x2_func(t) + x3_func(t)) + 0.5*c * x1 * x1 - P0;
             };
-            Func<double,double> K = t =>
+            K = t =>
             {                          
                 var x2der = x2_der(t);
                 var x3der = x3_der(t);   
                 return 0.5 * m * (x2der*x2der+x3der*x3der);
             };
-            Func<double, double> E = t => P(t) + K(t); ;
+            E = t => P(t) + K(t); ;  
             
-            plot.addFunction(new PlotView.FunctionAppearance(x1_func, 0x0000ff, 0, T, 2, 0xffff), "x1");
-            plot.addFunction(new PlotView.FunctionAppearance(x2_func, 0x00ff00, 0, T, 2, 0xffff), "x2");
-            plot.addFunction(new PlotView.FunctionAppearance(x3_func, 0xff0000, 0, T, 2, 0xffff), "x3");
-            plot.addFunction(new PlotView.FunctionAppearance(P, 0xffff00, 0, T, 2, 0xffff), "П");
-            plot.addFunction(new PlotView.FunctionAppearance(K, 0x00ffff, 0, T, 2, 0xffff), "T");
-            plot.addFunction(new PlotView.FunctionAppearance(E, 0xff00ff, 0, T, 2, 0xffff), "E");
-
+            initialized = true;
+            if (plot.graphics.functions.Count != 0)
+            {
+                plot.graphics.functions.ElementAt(0).func = x1_func;
+                plot.graphics.functions.ElementAt(1).func = x2_func;
+                plot.graphics.functions.ElementAt(2).func = x3_func;
+                plot.graphics.functions.ElementAt(3).func = P;
+                plot.graphics.functions.ElementAt(4).func = K;
+                plot.graphics.functions.ElementAt(5).func = E;
+                plot.graphics.functions.ElementAt(0).b = T;
+                plot.graphics.functions.ElementAt(1).b = T;
+                plot.graphics.functions.ElementAt(2).b = T;
+                plot.graphics.functions.ElementAt(3).b = T;
+                plot.graphics.functions.ElementAt(4).b = T;
+                plot.graphics.functions.ElementAt(5).b = T;
+            }
         }
 
         private void capture_Resized_1(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
@@ -178,6 +196,26 @@ namespace Task2
 
         private void capture_OpenGLDraw_1(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
+            OpenGL gl = args.OpenGL;
+            if (!initialized)
+            {   
+                gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
+                gl.MatrixMode(OpenGL.GL_MODELVIEW);
+                gl.LoadIdentity();
+                gl.Translate(0, -0, -2);
+                gl.LineWidth(4);
+                gl.Color(0.0, 1, 0);
+                gl.Begin(OpenGL.GL_LINES);
+                gl.Vertex4d(-2, 0, 0, 1);
+                gl.Vertex4d(-2 + 4 * T / period, 0, 0, 1);
+                gl.Color(1.0, 0, 0);
+                gl.Vertex4d(-2 + 4 * T / period, 0, 0, 1);
+                gl.Vertex4d(2, 0, 0, 1);
+                gl.End();
+                gl.Flush();
+                System.Threading.Thread.Sleep(100);
+                return;
+            }
             if (time == -1)
             {
                 ticks = DateTime.Now.Ticks;
@@ -191,8 +229,7 @@ namespace Task2
                 while (time > T)
                     time -= T;
             }
-
-            OpenGL gl = args.OpenGL;
+                                    
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             gl.LoadIdentity();
@@ -228,7 +265,13 @@ namespace Task2
 
             gl.LineWidth(1);
             gl.Color(0.0, 0, 1);
-            drawSpring(gl, 0.05, 1 + dist, 1 - x1_func(time));
+            drawSpring(gl, 0.05, 2, 1 - x1_func(time));
+
+            gl.Color(0, 0, 0);
+            gl.Begin(OpenGL.GL_LINES);
+            gl.Vertex4d(-1, 2, 0, 1);
+            gl.Vertex4d(1, 2, 0, 1);
+            gl.End();
 
             gl.Flush();
         }
@@ -239,6 +282,23 @@ namespace Task2
             gl.ClearColor(1, 1, 1, 1);
             gl.Disable(OpenGL.GL_LIGHTING);
             init();
+            plot.addFunction(new PlotView.FunctionAppearance(x1_func, 0x0000ff, 0, T, 2, 0xffff), "x1");
+            plot.addFunction(new PlotView.FunctionAppearance(x2_func, 0x00ff00, 0, T, 2, 0xffff), "x2");
+            plot.addFunction(new PlotView.FunctionAppearance(x3_func, 0xff0000, 0, T, 2, 0xffff), "x3");
+            plot.addFunction(new PlotView.FunctionAppearance(P, 0xffff00, 0, T, 2, 0xffff), "П");
+            plot.addFunction(new PlotView.FunctionAppearance(K, 0x00ffff, 0, T, 2, 0xffff), "T");
+            plot.addFunction(new PlotView.FunctionAppearance(E, 0xff00ff, 0, T, 2, 0xffff), "E");
+        }
+
+        private void compute_Click(object sender, RoutedEventArgs e)
+        {
+            alpha_0 = FunctionsAndParsing.Parser.ParseExpression(alpha_box.Text, null)(null);
+            m = FunctionsAndParsing.Parser.ParseExpression(m_box.Text, null)(null);
+            c= FunctionsAndParsing.Parser.ParseExpression(c_box.Text, null)(null);
+            epsilon= FunctionsAndParsing.Parser.ParseExpression(epsilon_box.Text, null)(null);
+            period= FunctionsAndParsing.Parser.ParseExpression(T_box.Text, null)(null);
+            Task task = new Task(init);
+            task.Start();
         }
     }
 }

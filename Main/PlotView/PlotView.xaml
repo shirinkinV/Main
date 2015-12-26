@@ -7,9 +7,12 @@
              xmlns:WPF="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF" xmlns:Sketch="clr-namespace:Sketches;assembly=Sketch" x:Class="PlotView.PlotView"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid x:Name="grid">
+    <Grid >
+        <WPF:OpenGLControl x:Name="glControl" Resized="OpenGLControl_Resized" OpenGLDraw="OpenGLControl_OpenGLDraw" OpenGLInitialized="OpenGLControl_OpenGLInitialized" MouseLeftButtonDown="glControl_MouseLeftButtonDown" MouseLeftButtonUp="glControl_MouseLeftButtonUp" MouseMove="glControl_MouseMove" Cursor="Cross" MouseWheel="glControl_MouseWheel">
+        </WPF:OpenGLControl>
 
-        <WPF:OpenGLControl x:Name="glControl" Resized="OpenGLControl_Resized" OpenGLDraw="OpenGLControl_OpenGLDraw" OpenGLInitialized="OpenGLControl_OpenGLInitialized" MouseLeftButtonDown="glControl_MouseLeftButtonDown" MouseLeftButtonUp="glControl_MouseLeftButtonUp" MouseMove="glControl_MouseMove" Cursor="Cross" MouseWheel="glControl_MouseWheel"/>
+        <Grid x:Name="grid"/>
 
+        
     </Grid>
 </UserControl>

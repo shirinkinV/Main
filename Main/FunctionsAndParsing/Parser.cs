@@ -269,6 +269,14 @@ namespace FunctionsAndParsing
                         result = new Variable(variables[name]);
                     else
                     {
+                        if (name == "PI")
+                        {
+                            return new OneVarFunction(x => Math.PI, null);
+                        }
+                        if (name == "e")
+                        {
+                            return new OneVarFunction(x => Math.E, null);
+                        }
                         variables[name] = variables.Last().Value + 1;
                         result = new Variable(variables[name]);
                     }

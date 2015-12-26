@@ -65,6 +65,20 @@ namespace PlotView
             graphics.functions.Add(func);
         }
 
+        public void clearFunctions()
+        {
+            graphics.functions.Clear();
+            System.Threading.Monitor.Enter(grid);
+            try {
+                grid.Children.Clear();
+            }
+            finally
+            {
+                System.Threading.Monitor.Exit(grid);
+            }
+            names.Clear();
+        }
+
         bool move;
         double cursorX, cursorY;
 
@@ -92,7 +106,7 @@ namespace PlotView
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             gl.LoadIdentity();
             gl.Translate(0, 0, -1);
-            graphics.paint(gl);
+            graphics.paint(gl);                
             gl.Flush();
         }
 

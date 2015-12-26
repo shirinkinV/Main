@@ -119,6 +119,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FunctionsAndParsing\FunctionsAndParsing.csproj">
+      <Project>{859450fb-44e9-4927-9b85-7d6d20bb8320}</Project>
+      <Name>FunctionsAndParsing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PlotView\PlotView.csproj">
       <Project>{087d235d-af98-442c-b50a-a1ee69b9491b}</Project>
       <Name>PlotView</Name>

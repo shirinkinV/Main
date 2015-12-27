@@ -89,7 +89,7 @@ namespace Task1
             E = t => P(t) + K(t);
 
             //Func<double, double[], double[]> system = (t, x) => new double[] { x[1], -b / a * x[0] + c / a };
-            Func<double,double[], double[]> system = (t, x) => new double[] { x[1], -b / a * x[0] + c / a -0.1*x[1] };
+            Func<double,double[], double[]> system = (t, x) => new double[] { x[1], -b / a * x[0] + c / a  };
             //double[] begin = new double[] { 0, V2 };
             double[] begin = new double[] { 0, V2 };
             double h = 0.001;

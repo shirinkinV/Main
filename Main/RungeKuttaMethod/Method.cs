@@ -302,17 +302,22 @@ namespace RungeKuttaMethod
             return result;
         }
 
-        public static List<ValueAndArgument> integrateEquationVector(ValueAndArgument begin, Func<double, double[], double[]> system, Func<ValueAndArgument, bool> condition)
+        public static List<ValueAndArgument> integrateEquationVector(double h, ValueAndArgument begin, Func<double, double[], double[]> system, Func<ValueAndArgument, bool> condition, double dataStep)
         {
             List<ValueAndArgument> result = new List<ValueAndArgument>();
             result.Add(begin);
             ValueAndArgument current = begin;
-            double h = 0.0000001;
+            double step = 0;
             while (condition(current))
             {
+                step += h;
                 ValueAndArgument yh = nextStepVector4order(h, current, system);
-                current = yh;
-                result.Add(yh);
+                if (step > dataStep)
+                {
+                    result.Add(yh);
+                    step = 0;
+                }
+                current = yh;   
             }
             return result;
         }

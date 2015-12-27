@@ -28,20 +28,33 @@ namespace Task2
         double g = 9.8;
         double m = 1;
         double c = 100;
+
         Func<double, double> x1_func;
         Func<double, double> x2_func;
         Func<double, double> x3_func;
+
+        Func<double, double> x1_func_v;
+        Func<double, double> x2_func_v;
+        Func<double, double> x3_func_v;
+
         double T;
         double time=-1;
         long ticks = 0;
         double dist = 0;
-        double epsilon = 1e-5;
+        double epsilon = 1e-3;
+        double h = 1e-5;
         bool initialized = true;
         double period = 20;
 
         Func<double, double> P;
         Func<double, double> K;
         Func<double, double> E;
+
+        Func<double, double> P_v;
+        Func<double, double> K_v;
+        Func<double, double> E_v;
+
+        bool verletFlag;
 
 
         public MainWindow()
@@ -121,18 +134,20 @@ namespace Task2
             double x30 = (l - R / Math.Cos(alpha_0)) + R * Math.Tan(alpha_0);
             double x3d0 = 0;
 
-            /*List<Method.ValueAndArgument> list = Method.integrateEquationVector(
-                new Method.ValueAndArgument(new double[] { x10, x1d0, x30, x3d0 }, 0), system, epsilon,
+            List<Method.ValueAndArgument> listRunge = Method.integrateEquationVector(epsilon,
+                new Method.ValueAndArgument(new double[] { x10, x1d0, x30, x3d0 }, 0), system,
                 value =>
                 {
                     T = value.argument;
                     
                     return T <= period;
-                }, 0.001); */ 
+                }, 0.001);
+
             double[] begin = new double[] { x10, x1d0, x30, x3d0 };
-            double[] postBegin = new double[] { x10 + x1d0 * epsilon, x1d0 + system(0, begin)[1] * epsilon, x30 + x3d0 * epsilon, x3d0 + system(0, begin)[3] * epsilon };
-            List<Method.ValueAndArgument> list = VerletMethod.Method.integrateEquationVectorWithSpeed(
-                new Method.ValueAndArgument(begin, 0), new Method.ValueAndArgument(postBegin, epsilon), system, epsilon,
+            double[] postBegin = new double[] { x10 + x1d0 * h, x1d0 + system(0, begin)[1] * h, x30 + x3d0 * h, x3d0 + system(0, begin)[3] * h };
+
+            List<Method.ValueAndArgument> listVerlet = VerletMethod.Method.integrateEquationVectorWithSpeed(
+                new Method.ValueAndArgument(begin, 0), new Method.ValueAndArgument(postBegin, h), system, h,
                 value =>
                 {
                     T = value.argument;
@@ -140,11 +155,19 @@ namespace Task2
                     return T <= period;
                 },0.001);
 
-            x1_func = Interpolator.interpolate(list, 0);
-            Func<double, double> x1_der = Interpolator.interpolate(list, 1);
-            x3_func = Interpolator.interpolate(list, 2);
-            Func<double, double> x3_der = Interpolator.interpolate(list, 3);
+            x1_func = Interpolator.interpolate(listRunge, 0);
+            Func<double, double> x1_der = Interpolator.interpolate(listRunge, 1);
+            x3_func = Interpolator.interpolate(listRunge, 2);
+            Func<double, double> x3_der = Interpolator.interpolate(listRunge, 3);
             x2_func = t => 0.5 * (l + x1_func(t) + x3_func(t)) - Rsquare / (2 * (l + x1_func(t) - x3_func(t)));
+
+            x1_func_v = Interpolator.interpolate(listVerlet, 0);
+            Func<double, double> x1_der_v = Interpolator.interpolate(listVerlet, 1);
+            x3_func_v = Interpolator.interpolate(listVerlet, 2);
+            Func<double, double> x3_der_v = Interpolator.interpolate(listVerlet, 3);
+            x2_func_v = t => 0.5 * (l + x1_func_v(t) + x3_func_v(t)) - Rsquare / (2 * (l + x1_func_v(t) - x3_func_v(t)));
+
+
 
             Func<double, double> x2_der = t =>
             {
@@ -154,29 +177,71 @@ namespace Task2
                 var x3 = x3_func(t); 
                 return 0.5 * (x1der + x3der) + Rsquare * (x1der - x3der) / (2 * (l + x1 - x3)*(l+x1- x3));
             };
-            double P0 = -g * m * (x2_func(0) + x3_func(0))+0.5*c*x1_func(0)*x2_func(0);
+
+
+            Func<double, double> x2_der_v = t =>
+            {
+                var x1der = x1_der_v(t);
+                var x3der = x3_der_v(t);
+                var x1 = x1_func_v(t);
+                var x3 = x3_func_v(t);
+                return 0.5 * (x1der + x3der) + Rsquare * (x1der - x3der) / (2 * (l + x1 - x3) * (l + x1 - x3));
+            };
+
+
+            double P0 = -g * m * (x2_func(0) + x3_func(0)) + 0.5 * c * x1_func(0) * x2_func(0);
             P = t =>
             {
                 var x1 = x1_func(t);
-                return -m * g * (x2_func(t) + x3_func(t)) + 0.5*c * x1 * x1 - P0;
+                return -m * g * (x2_func(t) + x3_func(t)) + 0.5 * c * x1 * x1 - P0;
             };
+
+            double P0V = -g * m * (x2_func_v(0) + x3_func_v(0)) + 0.5 * c * x1_func_v(0) * x2_func_v(0);
+            P_v = t =>
+            {
+                var x1 = x1_func_v(t);
+                return -m * g * (x2_func_v(t) + x3_func_v(t)) + 0.5 * c * x1 * x1 - P0V;
+            };
+
+           
             K = t =>
             {                          
                 var x2der = x2_der(t);
                 var x3der = x3_der(t);   
                 return 0.5 * m * (x2der*x2der+x3der*x3der);
             };
-            E = t => P(t) + K(t); ;  
-            
+            E = t => P(t) + K(t); ;
+
+            K_v = t =>
+            {
+                var x2der = x2_der_v(t);
+                var x3der = x3_der_v(t);
+                return 0.5 * m * (x2der * x2der + x3der * x3der);
+            };
+            E_v = t => P_v(t) + K_v(t); ;
+
+
             initialized = true;
             if (plot.graphics.functions.Count != 0)
             {
-                plot.graphics.functions.ElementAt(0).func = x1_func;
-                plot.graphics.functions.ElementAt(1).func = x2_func;
-                plot.graphics.functions.ElementAt(2).func = x3_func;
-                plot.graphics.functions.ElementAt(3).func = P;
-                plot.graphics.functions.ElementAt(4).func = K;
-                plot.graphics.functions.ElementAt(5).func = E;
+                if (!verletFlag)
+                {
+                    plot.graphics.functions.ElementAt(0).func = x1_func;
+                    plot.graphics.functions.ElementAt(1).func = x2_func;
+                    plot.graphics.functions.ElementAt(2).func = x3_func;
+                    plot.graphics.functions.ElementAt(3).func = P;
+                    plot.graphics.functions.ElementAt(4).func = K;
+                    plot.graphics.functions.ElementAt(5).func = E;
+                }
+                else
+                {
+                    plot.graphics.functions.ElementAt(0).func = x1_func_v;
+                    plot.graphics.functions.ElementAt(1).func = x2_func_v;
+                    plot.graphics.functions.ElementAt(2).func = x3_func_v;
+                    plot.graphics.functions.ElementAt(3).func = P_v;
+                    plot.graphics.functions.ElementAt(4).func = K_v;
+                    plot.graphics.functions.ElementAt(5).func = E_v;
+                }
                 plot.graphics.functions.ElementAt(0).b = T;
                 plot.graphics.functions.ElementAt(1).b = T;
                 plot.graphics.functions.ElementAt(2).b = T;
@@ -301,8 +366,37 @@ namespace Task2
             c= FunctionsAndParsing.Parser.ParseExpression(c_box.Text, null)(null);
             epsilon= FunctionsAndParsing.Parser.ParseExpression(epsilon_box.Text, null)(null);
             period= FunctionsAndParsing.Parser.ParseExpression(T_box.Text, null)(null);
+            h = FunctionsAndParsing.Parser.ParseExpression(h_box.Text, null)(null);
             Task task = new Task(init);
             task.Start();
+        }
+
+        private void runge_Checked(object sender, RoutedEventArgs e)
+        {
+            verletFlag = false;
+            if (plot.graphics.functions.Count != 0)
+            {
+                plot.graphics.functions.ElementAt(0).func = x1_func;
+                plot.graphics.functions.ElementAt(1).func = x2_func;
+                plot.graphics.functions.ElementAt(2).func = x3_func;
+                plot.graphics.functions.ElementAt(3).func = P;
+                plot.graphics.functions.ElementAt(4).func = K;
+                plot.graphics.functions.ElementAt(5).func = E;
+            }
+        }
+
+        private void verlet_Checked(object sender, RoutedEventArgs e)
+        {
+            verletFlag = true;
+            if (plot.graphics.functions.Count != 0)
+            {
+                plot.graphics.functions.ElementAt(0).func = x1_func_v;
+                plot.graphics.functions.ElementAt(1).func = x2_func_v;
+                plot.graphics.functions.ElementAt(2).func = x3_func_v;
+                plot.graphics.functions.ElementAt(3).func = P_v;
+                plot.graphics.functions.ElementAt(4).func = K_v;
+                plot.graphics.functions.ElementAt(5).func = E_v;
+            }
         }
     }
 }

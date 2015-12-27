@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Task2"
         xmlns:WPF="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF" xmlns:PlotView="clr-namespace:PlotView;assembly=PlotView" x:Class="Task2.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="630" Width="520" MinWidth="520" MinHeight="630">
+        Title="MainWindow" Height="492" Width="700" MinWidth="700.3" MinHeight="630">
     <Grid x:Name="grid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -28,11 +28,15 @@
                     <TextBox x:Name="m_box" HorizontalAlignment="Left" Height="23" Margin="54,45,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="46"/>
                     <Label x:Name="label2" Content="c" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="c_box" HorizontalAlignment="Left" Height="23" Margin="54,76,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="46"/>
-                    <Label x:Name="label3" Content="epsilon" HorizontalAlignment="Left" Margin="105,10,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="epsilon_box" HorizontalAlignment="Left" Height="23" Margin="158,14,0,0" TextWrapping="Wrap" Text="10^(-5)" VerticalAlignment="Top" Width="46"/>
+                    <Label x:Name="label3" Content="h1" HorizontalAlignment="Left" Margin="105,10,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="epsilon_box" HorizontalAlignment="Left" Height="23" Margin="158,14,0,0" TextWrapping="Wrap" Text="10^(-3)" VerticalAlignment="Top" Width="46"/>
                     <Label x:Name="label4" Content="T" HorizontalAlignment="Left" Margin="105,41,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="T_box" HorizontalAlignment="Left" Height="23" Margin="158,45,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="46"/>
                     <Button x:Name="compute" Content="Compute" HorizontalAlignment="Left" Margin="105,75,0,0" VerticalAlignment="Top" Width="99" Click="compute_Click"/>
+                    <Label x:Name="label5" Content="h2" HorizontalAlignment="Left" Margin="209,10,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="h_box" HorizontalAlignment="Left" Height="23" Margin="237,14,0,0" TextWrapping="Wrap" Text="10^(-5)" VerticalAlignment="Top" Width="68"/>
+                    <RadioButton x:Name="runge" Content="RungeKutta" HorizontalAlignment="Left" Margin="209,47,0,0" VerticalAlignment="Top" GroupName="method" IsChecked="True" Checked="runge_Checked"/>
+                    <RadioButton x:Name="verlet" Content="Verlet" HorizontalAlignment="Left" Margin="209,78,0,0" VerticalAlignment="Top" GroupName="method" Checked="verlet_Checked"/>
                 </Grid>
             </Border>
         </Grid>

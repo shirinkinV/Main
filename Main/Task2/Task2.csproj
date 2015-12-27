@@ -131,6 +131,10 @@
       <Project>{53b93c5b-73e1-4946-bcc9-09e4e4f0fe4e}</Project>
       <Name>RungeKuttaMethod</Name>
     </ProjectReference>
+    <ProjectReference Include="..\VerletMethod\VerletMethod.csproj">
+      <Project>{7169c4d4-8997-4ea8-a742-33d5a713dcdd}</Project>
+      <Name>VerletMethod</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

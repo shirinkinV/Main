@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SharpGL;
+using RungeKuttaMethod;
 
 namespace Task1
 {
@@ -28,14 +29,14 @@ namespace Task1
         double
             J1 = 2.5,
             R1 = 1,
-            V2 = 0,
-            m2 = 1.5,
-            c4 = 5,
+            V2 = 1,
+            m2 = 0.9,
+            c4 = 2,
             d4 = 0.5,
-            alpha = Math.PI / 3,
-            beta = Math.PI / 6,
-            m3 = 2,
-            c5 = 4,
+            alpha = Math.PI*0.1,
+            beta = Math.PI*0.4,
+            m3 = 0.3,
+            c5 = 1,
             d5 = 0.5,
             g = 9.8;
 
@@ -44,32 +45,122 @@ namespace Task1
         long ticks = 0;
 
         Func<double, double> x_func;
+        Func<double, double> x_der;
+        Func<double, double> x_func_numeric;     
+        Func<double, double> x_der_numeric;
+        Func<double, double> K;
+        Func<double, double> P;
+        Func<double, double> E;
+        Func<double, double> K_numeric;
+        Func<double, double> P_numeric;
+        Func<double, double> E_numeric;
+
+        bool initialized = true;
+        double period=1000;
+        double epsilon = 1e-5;
+
 
         void init()
         {
+            if (initialized == false) { return; }
+            initialized = false;
             double a = J1 / (R1 * R1) + m2 + m3;
             double b = c4 + c5;
             double c = g * (m3 * Math.Sin(beta) - m2 * Math.Sin(alpha)) + c5 * d5 - c4 * d4;
             T = Math.PI * 2 * Math.Sqrt(a / b);
             x_func = t => -c / b * Math.Cos(Math.Sqrt(b / a) * t) + V2 * Math.Sqrt(a / b) * Math.Sin(Math.Sqrt(b / a) * t) + c / b;
-            Func<double, double> x_der = t => c / b * Math.Sqrt(b / a) * Math.Sin(Math.Sqrt(b / a) * t) + V2 * Math.Cos(Math.Sqrt(b / a) * t);
-            Func<double, double> P = t =>
+            x_der = t => c / b * Math.Sqrt(b / a) * Math.Sin(Math.Sqrt(b / a) * t) + V2 * Math.Cos(Math.Sqrt(b / a) * t);
+            var x1p = d4 + x_func(0);
+            var x2p = d5 - x_func(0);
+            double P0 = 0.5 * (c4 * x1p * x1p + c5 * x2p * x2p) + m2 * g * x_func(0) * Math.Sin(alpha) - m3 * g * x_func(0) * Math.Sin(beta);
+            P = t =>
             {
                 double x1 = d4 + x_func(t);
                 double x2 = d5 - x_func(t);
-                return 0.5 * (c4 * x1 * x1 + c5 * x2 * x2) + m2 * g * x_func(t) * Math.Sin(alpha) - m3 * g * x_func(t) * Math.Sin(beta);
+                return 0.5 * (c4 * x1 * x1 + c5 * x2 * x2) + m2 * g * x_func(t) * Math.Sin(alpha) - m3 * g * x_func(t) * Math.Sin(beta)-P0;
             };
-            Func<double, double> K = t =>
+            var xdp = x_der(0);
+            double K0 = 0.5 * ((J1 / (R1 * R1) + m2 + m3) * (xdp * xdp));
+            K = t =>
             {
                 var xd = x_der(t);
-                return 0.5 * ((J1 / (R1 * R1) + m2 + m3) * (xd * xd));
+                return 0.5 * ((J1 / (R1 * R1) + m2 + m3) * (xd * xd)) - K0;
             };
-            Func<double, double> E = t => P(t) + K(t);
+            E = t => P(t) + K(t);
 
-            plot.addFunction(new PlotView.FunctionAppearance(x_func, 0xff0000, 0, T, 1, 0xffff), "x");       
-            plot.addFunction(new PlotView.FunctionAppearance(K, 0x00ff00, 0, T, 1, 0xffff), "T");
-            plot.addFunction(new PlotView.FunctionAppearance(P, 0x0000ff, 0, T, 1, 0xffff), "П");
-            plot.addFunction(new PlotView.FunctionAppearance(E, 0xff00ff, 0, T, 1, 0xffff), "E");
+            //Func<double, double[], double[]> system = (t, x) => new double[] { x[1], -b / a * x[0] + c / a };
+            Func<double,double[], double[]> system = (t, x) => new double[] { x[1], -b / a * x[0] + c / a -0.1*x[1] };
+            //double[] begin = new double[] { 0, V2 };
+            double[] begin = new double[] { 0, V2 };
+            double h = 0.001;
+            double[] postBegin = new double[] { begin[0] + V2 * h, V2+h*(-b / a * 0 + c / a) };
+            /*List<Method.ValueAndArgument> list = Method.integrateEquationVector(
+                new Method.ValueAndArgument(begin, 0), system, epsilon,
+                value =>
+                {
+                    T = value.argument;
+                    return T <= period;
+                }, 0.001);*/
+            List<Method.ValueAndArgument> list = VerletMethod.Method.integrateEquationVectorWithSpeed(
+                new Method.ValueAndArgument(begin, 0), new Method.ValueAndArgument(postBegin, h), system, h,
+                value =>
+                {
+                    T = value.argument;
+                    return T <= period;
+                }, 0.001);
+            //x_func_numeric = Task2.Interpolator.interpolate(list, 0);
+            //x_der_numeric = Task2.Interpolator.interpolate(list, 1);
+            x_func_numeric = Task2.Interpolator.interpolate(list, 0);
+            x_der_numeric = Task2.Interpolator.interpolate(list, 1);
+
+
+
+            double x2pn = d5 - x_func_numeric(0); 
+            double x1pn = d4 + x_func_numeric(0);
+            double P0N= 0.5 * (c4 * x1pn * x1pn + c5 * x2pn * x2pn) + m2 * g * x_func_numeric(0) * Math.Sin(alpha) - m3 * g * x_func_numeric(0) * Math.Sin(beta);
+            P_numeric = t =>
+            {
+                double x1 = d4 + x_func_numeric(t);
+                double x2 = d5 - x_func_numeric(t);
+                return 0.5 * (c4 * x1 * x1 + c5 * x2 * x2) + m2 * g * x_func_numeric(t) * Math.Sin(alpha) - m3 * g * x_func_numeric(t) * Math.Sin(beta) - P0N;
+            };
+            var xdn = x_der_numeric(0);
+            var K0N = 0.5 * ((J1 / (R1 * R1) + m2 + m3) * (xdn * xdn));
+            K_numeric = t =>
+            {
+                var xd = x_der_numeric(t);
+                return 0.5 * ((J1 / (R1 * R1) + m2 + m3) * (xd * xd))-K0N;
+            };
+            E_numeric = t => P_numeric(t) + K_numeric(t);
+
+            var ePeriod = E_numeric(period) - E(period);
+            initialized = true;
+            if (plot.graphics.functions.Count != 0)
+            {
+                plot.graphics.functions.ElementAt(0).func = x_func;
+                plot.graphics.functions.ElementAt(1).func = K;
+                plot.graphics.functions.ElementAt(2).func = P;
+                plot.graphics.functions.ElementAt(3).func = E;
+                plot.graphics.functions.ElementAt(4).func = x_func_numeric;
+                plot.graphics.functions.ElementAt(5).func = K_numeric;
+                plot.graphics.functions.ElementAt(6).func = P_numeric;
+                plot.graphics.functions.ElementAt(7).func = E_numeric;
+                plot.graphics.functions.ElementAt(8).func = x_der;
+                plot.graphics.functions.ElementAt(9).func = x_der_numeric;
+
+                plot.graphics.functions.ElementAt(0).b = T;
+                plot.graphics.functions.ElementAt(1).b = T;
+                plot.graphics.functions.ElementAt(2).b = T;
+                plot.graphics.functions.ElementAt(3).b = T;
+                plot.graphics.functions.ElementAt(4).b = T;
+                plot.graphics.functions.ElementAt(5).b = T;
+                plot.graphics.functions.ElementAt(6).b = T;
+                plot.graphics.functions.ElementAt(7).b = T;
+                plot.graphics.functions.ElementAt(8).b = T;
+                plot.graphics.functions.ElementAt(9).b = T;
+
+            }
+
         }
 
         void drawCircle(OpenGL gl, double radius, double x, double y, double phi)
@@ -146,26 +237,27 @@ namespace Task1
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             gl.LoadIdentity();
             gl.Translate(0, 0, -1);
+            gl.LineWidth(2);
 
             gl.Color(0, 0, 0, 1);
-            drawCircle(gl, R1, 0, 0, -x_func(time) / R1);
+            drawCircle(gl, R1, 0, 0, -x_func_numeric(time) / R1);
 
             double bodyLen = 1;
             double beginSprLen = 1;
 
-            drawBody(gl, -4 - R1 / Math.Sin(alpha), -4 * Math.Tan(alpha), alpha / Math.PI * 180, beginSprLen + d4 + x_func(time), 0.1, 1, bodyLen);
+            drawBody(gl, -2 - R1 / Math.Sin(alpha), -2 * Math.Tan(alpha), alpha / Math.PI * 180, beginSprLen + d4 + x_func_numeric(time), 0.1, 1, bodyLen);
 
             gl.Begin(OpenGL.GL_LINES);
 
-            gl.Vertex4d(-4 - R1 / Math.Sin(alpha) + (beginSprLen + d4 + x_func(time) + bodyLen) * Math.Cos(alpha), -4 * Math.Tan(alpha) + (beginSprLen + d4 + x_func(time) + bodyLen) * Math.Sin(alpha), 0, 1);
+            gl.Vertex4d(-2 - R1 / Math.Sin(alpha) + (beginSprLen + d4 + x_func_numeric(time) + bodyLen) * Math.Cos(alpha), -2 * Math.Tan(alpha) + (beginSprLen + d4 + x_func_numeric(time) + bodyLen) * Math.Sin(alpha), 0, 1);
             gl.Vertex4d(-R1 * Math.Sin(alpha), R1 * Math.Cos(alpha), 0, 1);
 
-            gl.Vertex4d(3 + R1 / Math.Sin(beta) - (beginSprLen + d5 - x_func(time) + bodyLen) * Math.Cos(beta), -3 * Math.Tan(beta) + (beginSprLen + d5 - x_func(time) + bodyLen) * Math.Sin(beta), 0, 1);
+            gl.Vertex4d(2 + R1 / Math.Sin(beta) - (beginSprLen + d5 - x_func_numeric(time) + bodyLen) * Math.Cos(beta), -2 * Math.Tan(beta) + (beginSprLen + d5 - x_func_numeric(time) + bodyLen) * Math.Sin(beta), 0, 1);
             gl.Vertex4d(R1 * Math.Sin(beta), R1 * Math.Cos(beta), 0, 1);
 
             
             gl.End();
-            drawBody(gl, 3 + R1 / Math.Sin(beta), -3 * Math.Tan(beta), 180 - beta / Math.PI * 180, beginSprLen + d5 - x_func(time), 0.1, 1, bodyLen);
+            drawBody(gl, 2 + R1 / Math.Sin(beta), -2 * Math.Tan(beta), 180 - beta / Math.PI * 180, beginSprLen + d5 - x_func_numeric(time), 0.1, 1, bodyLen);
 
 
 
@@ -178,6 +270,18 @@ namespace Task1
             gl.ClearColor(1, 1, 1, 1);
             gl.Disable(OpenGL.GL_LIGHTING);
             init();
+            plot.addFunction(new PlotView.FunctionAppearance(x_func, 0xff0000, 0, T, 1, 0xffff), "x");
+            plot.addFunction(new PlotView.FunctionAppearance(K, 0x00AA00, 0, T, 1, 0xffff), "T");
+            plot.addFunction(new PlotView.FunctionAppearance(P, 0x0000ff, 0, T, 1, 0xffff), "П");
+            plot.addFunction(new PlotView.FunctionAppearance(E, 0xff00ff, 0, T, 3, 0xffff), "E");
+
+            plot.addFunction(new PlotView.FunctionAppearance(x_func_numeric, 0xff0000, 0, T, 1, 0xf0f0), "x_n");
+            plot.addFunction(new PlotView.FunctionAppearance(K_numeric, 0x00AA00, 0, T, 1, 0xf0f0), "T_n");
+            plot.addFunction(new PlotView.FunctionAppearance(P_numeric, 0x0000ff, 0, T, 1, 0xf0f0), "П_n");
+            plot.addFunction(new PlotView.FunctionAppearance(E_numeric, 0x000000, 0, T, 3, 0xf0f0), "E_n");
+
+            plot.addFunction(new PlotView.FunctionAppearance(x_der, 0x7f3060, 0, T, 1, 0xffff), "x'");
+            plot.addFunction(new PlotView.FunctionAppearance(x_der_numeric, 0x7f3060, 0, T, 1, 0xf0f0), "x'_n");
         }
 
         private void capture_Resized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)

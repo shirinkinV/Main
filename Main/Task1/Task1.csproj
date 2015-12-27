@@ -34,6 +34,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MathNet.Numerics, Version=3.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MathNet.Numerics.dll</HintPath>
+    </Reference>
     <Reference Include="SharpGL">
       <HintPath>..\SharpGL.dll</HintPath>
     </Reference>
@@ -104,9 +108,17 @@
       <Project>{087d235d-af98-442c-b50a-a1ee69b9491b}</Project>
       <Name>PlotView</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RungeKuttaMethod\RungeKuttaMethod.csproj">
+      <Project>{53b93c5b-73e1-4946-bcc9-09e4e4f0fe4e}</Project>
+      <Name>RungeKuttaMethod</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Task2\Task2.csproj">
       <Project>{4feed7e8-8a1a-4eda-ab9d-2de22558679a}</Project>
       <Name>Task2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VerletMethod\VerletMethod.csproj">
+      <Project>{7169c4d4-8997-4ea8-a742-33d5a713dcdd}</Project>
+      <Name>VerletMethod</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

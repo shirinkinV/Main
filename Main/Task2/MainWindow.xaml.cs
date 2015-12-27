@@ -24,7 +24,7 @@ namespace Task2
     {
         double R=1;
         double alpha_0=Math.PI/3;
-        double l = 4;
+        double l = 6;
         double g = 9.8;
         double m = 1;
         double c = 100;
@@ -121,20 +121,24 @@ namespace Task2
             double x30 = (l - R / Math.Cos(alpha_0)) + R * Math.Tan(alpha_0);
             double x3d0 = 0;
 
-            List<Method.ValueAndArgument> list = Method.integrateEquationVector(
+            /*List<Method.ValueAndArgument> list = Method.integrateEquationVector(
                 new Method.ValueAndArgument(new double[] { x10, x1d0, x30, x3d0 }, 0), system, epsilon,
                 value =>
                 {
                     T = value.argument;
-                    /*if (Method.difference(value.value, new double[] { x10, x1d0, x30, x3d0 }) < 1e-3 && T > 1e-4)
-                        return false;
-                    else
-                        return true; */
-                    //if (Method.difference(value.value,new double[] { 0,0,0,0})>1000||
-                    //Double.IsNaN(value.value[0])||double.IsInfinity(value.value[0]))
-                    //    return false;
+                    
                     return T <= period;
-                }, 0.001);
+                }, 0.001); */ 
+            double[] begin = new double[] { x10, x1d0, x30, x3d0 };
+            double[] postBegin = new double[] { x10 + x1d0 * epsilon, x1d0 + system(0, begin)[1] * epsilon, x30 + x3d0 * epsilon, x3d0 + system(0, begin)[3] * epsilon };
+            List<Method.ValueAndArgument> list = VerletMethod.Method.integrateEquationVectorWithSpeed(
+                new Method.ValueAndArgument(begin, 0), new Method.ValueAndArgument(postBegin, epsilon), system, epsilon,
+                value =>
+                {
+                    T = value.argument;
+
+                    return T <= period;
+                },0.001);
 
             x1_func = Interpolator.interpolate(list, 0);
             Func<double, double> x1_der = Interpolator.interpolate(list, 1);
@@ -191,7 +195,7 @@ namespace Task2
             double ratio = capture.ActualWidth / Math.Max(1, capture.ActualHeight);
 
             //gl.Frustum(-0.1 * ratio, 0.1 * ratio, -0.1, 0.1, 0.1, 10);
-            gl.Ortho(-6 * ratio, 6 * ratio, -6, 6, 0.5,10);
+            gl.Ortho(-5.1 * ratio, 5.1 * ratio, -5.1, 5.1, 0.5,10);
         }
 
         private void capture_OpenGLDraw_1(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
@@ -233,7 +237,7 @@ namespace Task2
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             gl.LoadIdentity();
-            gl.Translate(0, -0, -2);
+            gl.Translate(0, 3, -2);
             gl.Rotate(10, 1, 0, 0);
 
             gl.LineWidth(1);
@@ -282,12 +286,12 @@ namespace Task2
             gl.ClearColor(1, 1, 1, 1);
             gl.Disable(OpenGL.GL_LIGHTING);
             init();
-            plot.addFunction(new PlotView.FunctionAppearance(x1_func, 0x0000ff, 0, T, 2, 0xffff), "x1");
-            plot.addFunction(new PlotView.FunctionAppearance(x2_func, 0x00ff00, 0, T, 2, 0xffff), "x2");
-            plot.addFunction(new PlotView.FunctionAppearance(x3_func, 0xff0000, 0, T, 2, 0xffff), "x3");
-            plot.addFunction(new PlotView.FunctionAppearance(P, 0xffff00, 0, T, 2, 0xffff), "П");
-            plot.addFunction(new PlotView.FunctionAppearance(K, 0x00ffff, 0, T, 2, 0xffff), "T");
-            plot.addFunction(new PlotView.FunctionAppearance(E, 0xff00ff, 0, T, 2, 0xffff), "E");
+            plot.addFunction(new PlotView.FunctionAppearance(x1_func, 0x0000aa, 0, T, 3, 0xffff), "x1");
+            plot.addFunction(new PlotView.FunctionAppearance(x2_func, 0x008800, 0, T, 3, 0xffff), "x2");
+            plot.addFunction(new PlotView.FunctionAppearance(x3_func, 0x660000, 0, T, 3, 0xffff), "x3");
+            plot.addFunction(new PlotView.FunctionAppearance(P, 0x777700, 0, T, 2, 0x0f0f), "П");
+            plot.addFunction(new PlotView.FunctionAppearance(K, 0x00aaaa, 0, T, 2, 0x0fff), "T");
+            plot.addFunction(new PlotView.FunctionAppearance(E, 0x000000, 0, T, 4, 0xf7b8), "E");
         }
 
         private void compute_Click(object sender, RoutedEventArgs e)

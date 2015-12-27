@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionsAndParsing", "Func
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task1", "Task1\Task1.csproj", "{DEB3CD32-9E07-4153-9DB9-07F6B42D6D44}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VerletMethod", "VerletMethod\VerletMethod.csproj", "{7169C4D4-8997-4EA8-A742-33D5A713DCDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,12 @@ Global
 		{DEB3CD32-9E07-4153-9DB9-07F6B42D6D44}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DEB3CD32-9E07-4153-9DB9-07F6B42D6D44}.Release-Signed|Any CPU.ActiveCfg = Release|Any CPU
 		{DEB3CD32-9E07-4153-9DB9-07F6B42D6D44}.Release-Signed|Any CPU.Build.0 = Release|Any CPU
+		{7169C4D4-8997-4EA8-A742-33D5A713DCDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7169C4D4-8997-4EA8-A742-33D5A713DCDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7169C4D4-8997-4EA8-A742-33D5A713DCDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7169C4D4-8997-4EA8-A742-33D5A713DCDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7169C4D4-8997-4EA8-A742-33D5A713DCDD}.Release-Signed|Any CPU.ActiveCfg = Release|Any CPU
+		{7169C4D4-8997-4EA8-A742-33D5A713DCDD}.Release-Signed|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

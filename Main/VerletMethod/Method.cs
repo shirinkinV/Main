@@ -12,15 +12,26 @@ namespace VerletMethod
             double[] values = new double[preStep.value.Length];
             for (int i = 0; i < values.Length; i++)
             {
-                values[i] = 2 * curStep.value[i] - preStep.value[i] + system(curStep.argument, curStep.value)[i] * h * h;
+                if (i % 2 == 0)
+                    values[i] = 2 * curStep.value[i] - preStep.value[i] + system(curStep.argument, curStep.value)[i + 1] * h * h;
+                else
+                    values[i] = (values[i - 1] - curStep.value[i - 1]) / h;
             }
             return new RungeKuttaMethod.Method.ValueAndArgument(values, curStep.argument + h);
         }
 
-        public static List<RungeKuttaMethod.Method.ValueAndArgument> integrateEquationVector(RungeKuttaMethod.Method.ValueAndArgument begin, RungeKuttaMethod.Method.ValueAndArgument postBegin, Func<double, double[], double[]> system, double h, Func<RungeKuttaMethod.Method.ValueAndArgument, bool> condition, double dataStep)
+        public static List<RungeKuttaMethod.Method.ValueAndArgument> integrateEquationVector(RungeKuttaMethod.Method.ValueAndArgument begin, Func<double, double[], double[]> system, double h, Func<RungeKuttaMethod.Method.ValueAndArgument, bool> condition, double dataStep)
         {
             RungeKuttaMethod.Method.ValueAndArgument pre = begin;
-            RungeKuttaMethod.Method.ValueAndArgument current = postBegin;
+            double[] twoStep = new double[begin.value.Length];
+            for(int i = 0; i < twoStep.Length; i++)
+            {
+                if (i % 2 == 0)
+                    twoStep[i] = begin.value[i] + begin.value[i + 1] * h + h * h * system(0, begin.value)[i + 1];
+                else
+                    twoStep[i] = (twoStep[i - 1] - begin.value[i - 1]) / h;
+            }
+            RungeKuttaMethod.Method.ValueAndArgument current = new RungeKuttaMethod.Method.ValueAndArgument(twoStep, h);
             List<RungeKuttaMethod.Method.ValueAndArgument> result = new List<RungeKuttaMethod.Method.ValueAndArgument>();
             result.Add(begin);
             double step = 0;
@@ -39,37 +50,42 @@ namespace VerletMethod
             return result;
         }
 
-        public static RungeKuttaMethod.Method.ValueAndArgument nextStepWithSpeed(double h, RungeKuttaMethod.Method.ValueAndArgument preStep, RungeKuttaMethod.Method.ValueAndArgument curStep, Func<double, double[], double[]> system)
+        public static RungeKuttaMethod.Method.ValueAndArgument nextStepWithSpeed(double h, RungeKuttaMethod.Method.ValueAndArgument preStep, Func<double, double[], double[]> system)
         {
             double[] values = new double[preStep.value.Length];
-            for (int i = 0; i < values.Length; i++)
+            for(int i = 0; i < values.Length;i++)
             {
-                if (i % 2 == 0)
-                    values[i] = 2 * curStep.value[i] - preStep.value[i] + system(curStep.argument, curStep.value)[i + 1] * h * h;
-                else
-                    values[i] = (values[i - 1] - curStep.value[i - 1]) / h;
+                values[i] = preStep.value[i];
             }
-            return new RungeKuttaMethod.Method.ValueAndArgument(values, curStep.argument + h);
+            for (int i = 0; i < values.Length; i += 2)
+            {       
+                values[i] = preStep.value[i] + preStep.value[i + 1] * h + 0.5 * system(preStep.argument, preStep.value)[i + 1] * h * h;
+            }
+            for (int i = 1; i < values.Length; i += 2)
+            {
+                values[i] = preStep.value[i] + 0.5 * h * (system(preStep.argument, preStep.value)[i] + system(preStep.argument + h, values)[i]);
+            }
+            
+            return new RungeKuttaMethod.Method.ValueAndArgument(values, preStep.argument + h);
         }
 
-        public static List<RungeKuttaMethod.Method.ValueAndArgument> integrateEquationVectorWithSpeed(RungeKuttaMethod.Method.ValueAndArgument begin, RungeKuttaMethod.Method.ValueAndArgument postBegin, Func<double, double[], double[]> system, double h, Func<RungeKuttaMethod.Method.ValueAndArgument, bool> condition, double dataStep)
+        public static List<RungeKuttaMethod.Method.ValueAndArgument> integrateEquationVectorWithSpeed(RungeKuttaMethod.Method.ValueAndArgument begin, Func<double, double[], double[]> system, double h, Func<RungeKuttaMethod.Method.ValueAndArgument, bool> condition, double dataStep)
         {
-            RungeKuttaMethod.Method.ValueAndArgument pre = begin;
-            RungeKuttaMethod.Method.ValueAndArgument current = postBegin;
+            RungeKuttaMethod.Method.ValueAndArgument pre = begin;                                              
+
             List<RungeKuttaMethod.Method.ValueAndArgument> result = new List<RungeKuttaMethod.Method.ValueAndArgument>();
             result.Add(begin);
             double step = 0;
-            while (condition(current))
+            while (condition(pre))
             {
                 step += h;
-                RungeKuttaMethod.Method.ValueAndArgument next = nextStepWithSpeed(h, pre, current, system);
+                RungeKuttaMethod.Method.ValueAndArgument next = nextStepWithSpeed(h, pre, system);
                 if (step > dataStep)
                 {
                     result.Add(next);
                     step = 0;
                 }
-                pre = current;
-                current = next;
+                pre = next;      
             }
             return result;
         }

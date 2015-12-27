@@ -41,8 +41,8 @@ namespace Task2
         double time=-1;
         long ticks = 0;
         double dist = 0;
-        double epsilon = 1e-3;
-        double h = 1e-5;
+        double h1 = 1e-3;
+        double h2 = 1e-5;
         bool initialized = true;
         double period = 20;
 
@@ -134,7 +134,7 @@ namespace Task2
             double x30 = (l - R / Math.Cos(alpha_0)) + R * Math.Tan(alpha_0);
             double x3d0 = 0;
 
-            List<Method.ValueAndArgument> listRunge = Method.integrateEquationVector(epsilon,
+            List<Method.ValueAndArgument> listRunge = Method.integrateEquationVector(h1,
                 new Method.ValueAndArgument(new double[] { x10, x1d0, x30, x3d0 }, 0), system,
                 value =>
                 {
@@ -144,10 +144,9 @@ namespace Task2
                 }, 0.001);
 
             double[] begin = new double[] { x10, x1d0, x30, x3d0 };
-            double[] postBegin = new double[] { x10 + x1d0 * h, x1d0 + system(0, begin)[1] * h, x30 + x3d0 * h, x3d0 + system(0, begin)[3] * h };
-
+            
             List<Method.ValueAndArgument> listVerlet = VerletMethod.Method.integrateEquationVectorWithSpeed(
-                new Method.ValueAndArgument(begin, 0), new Method.ValueAndArgument(postBegin, h), system, h,
+                new Method.ValueAndArgument(begin, 0),  system, h2,
                 value =>
                 {
                     T = value.argument;
@@ -267,7 +266,7 @@ namespace Task2
         {
             OpenGL gl = args.OpenGL;
             if (!initialized)
-            {   
+            {
                 gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
                 gl.MatrixMode(OpenGL.GL_MODELVIEW);
                 gl.LoadIdentity();
@@ -298,49 +297,90 @@ namespace Task2
                 while (time > T)
                     time -= T;
             }
-                                    
+
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             gl.LoadIdentity();
             gl.Translate(0, 3, -2);
             gl.Rotate(10, 1, 0, 0);
+            if (!verletFlag)
+            {
+                gl.LineWidth(1);
+                gl.Color(0, 0, 0);
+                gl.Begin(OpenGL.GL_LINES);
+                double angle1 = 0, angle2 = Math.PI / 3 * 2, angle3 = -Math.PI / 3 * 2;
+                gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x1_func(time), 0.05 * Math.Sin(angle1), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x2_func(time), 0.05 * Math.Sin(angle1), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x1_func(time), 0.05 * Math.Sin(angle2), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x2_func(time), 0.05 * Math.Sin(angle2), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x1_func(time), 0.05 * Math.Sin(angle3), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x2_func(time), 0.05 * Math.Sin(angle3), 1);
 
-            gl.LineWidth(1);
-            gl.Color(0, 0, 0);
-            gl.Begin(OpenGL.GL_LINES);
-            double angle1 = 0, angle2 = Math.PI / 3 * 2, angle3 = -Math.PI / 3 * 2;
-            gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x1_func(time), 0.05 * Math.Sin(angle1), 1);
-            gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x2_func(time), 0.05 * Math.Sin(angle1), 1);
-            gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x1_func(time), 0.05 * Math.Sin(angle2), 1);
-            gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x2_func(time), 0.05 * Math.Sin(angle2), 1);
-            gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x1_func(time), 0.05 * Math.Sin(angle3), 1);
-            gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x2_func(time), 0.05 * Math.Sin(angle3), 1);
+                gl.Vertex4d(R * Math.Cos(angle1), 1 - x3_func(time), R * Math.Sin(angle1), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x2_func(time), 0.05 * Math.Sin(angle1), 1);
+                gl.Vertex4d(R * Math.Cos(angle2), 1 - x3_func(time), R * Math.Sin(angle2), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x2_func(time), 0.05 * Math.Sin(angle2), 1);
+                gl.Vertex4d(R * Math.Cos(angle3), 1 - x3_func(time), R * Math.Sin(angle3), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x2_func(time), 0.05 * Math.Sin(angle3), 1);
 
-            gl.Vertex4d(R * Math.Cos(angle1), 1 - x3_func(time), R * Math.Sin(angle1), 1);
-            gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x2_func(time), 0.05 * Math.Sin(angle1), 1);
-            gl.Vertex4d(R * Math.Cos(angle2), 1 - x3_func(time), R * Math.Sin(angle2), 1);
-            gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x2_func(time), 0.05 * Math.Sin(angle2), 1);
-            gl.Vertex4d(R * Math.Cos(angle3), 1 - x3_func(time), R * Math.Sin(angle3), 1);
-            gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x2_func(time), 0.05 * Math.Sin(angle3), 1);
+                gl.End();
 
-            gl.End();
+                gl.LineWidth(2);
+                gl.Color(1.0, 0, 0);
+                drawCircle(gl, R, 1 - x3_func(time));
 
-            gl.LineWidth(2);
-            gl.Color(1.0, 0, 0);
-            drawCircle(gl, R, 1 - x3_func(time));
+                gl.Color(0.0, 1, 0);
+                drawCircle(gl, 0.05, 1 - x2_func(time));
 
-            gl.Color(0.0, 1, 0);
-            drawCircle(gl, 0.05, 1 - x2_func(time));
+                gl.LineWidth(1);
+                gl.Color(0.0, 0, 1);
+                drawSpring(gl, 0.05, 2, 1 - x1_func(time));
 
-            gl.LineWidth(1);
-            gl.Color(0.0, 0, 1);
-            drawSpring(gl, 0.05, 2, 1 - x1_func(time));
+                gl.Color(0, 0, 0);
+                gl.Begin(OpenGL.GL_LINES);
+                gl.Vertex4d(-1, 2, 0, 1);
+                gl.Vertex4d(1, 2, 0, 1);
+                gl.End();
+            }
+            else
+            {
+                gl.LineWidth(1);
+                gl.Color(0, 0, 0);
+                gl.Begin(OpenGL.GL_LINES);
+                double angle1 = 0, angle2 = Math.PI / 3 * 2, angle3 = -Math.PI / 3 * 2;
+                gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x1_func_v(time), 0.05 * Math.Sin(angle1), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x2_func_v(time), 0.05 * Math.Sin(angle1), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x1_func_v(time), 0.05 * Math.Sin(angle2), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x2_func_v(time), 0.05 * Math.Sin(angle2), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x1_func_v(time), 0.05 * Math.Sin(angle3), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x2_func_v(time), 0.05 * Math.Sin(angle3), 1);
 
-            gl.Color(0, 0, 0);
-            gl.Begin(OpenGL.GL_LINES);
-            gl.Vertex4d(-1, 2, 0, 1);
-            gl.Vertex4d(1, 2, 0, 1);
-            gl.End();
+                gl.Vertex4d(R * Math.Cos(angle1), 1 - x3_func_v(time), R * Math.Sin(angle1), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x2_func_v(time), 0.05 * Math.Sin(angle1), 1);
+                gl.Vertex4d(R * Math.Cos(angle2), 1 - x3_func_v(time), R * Math.Sin(angle2), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x2_func_v(time), 0.05 * Math.Sin(angle2), 1);
+                gl.Vertex4d(R * Math.Cos(angle3), 1 - x3_func_v(time), R * Math.Sin(angle3), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x2_func_v(time), 0.05 * Math.Sin(angle3), 1);
+
+                gl.End();
+
+                gl.LineWidth(2);
+                gl.Color(1.0, 0, 0);
+                drawCircle(gl, R, 1 - x3_func_v(time));
+
+                gl.Color(0.0, 1, 0);
+                drawCircle(gl, 0.05, 1 - x2_func_v(time));
+
+                gl.LineWidth(1);
+                gl.Color(0.0, 0, 1);
+                drawSpring(gl, 0.05, 2, 1 - x1_func_v(time));
+
+                gl.Color(0, 0, 0);
+                gl.Begin(OpenGL.GL_LINES);
+                gl.Vertex4d(-1, 2, 0, 1);
+                gl.Vertex4d(1, 2, 0, 1);
+                gl.End();
+            }
 
             gl.Flush();
         }
@@ -364,9 +404,9 @@ namespace Task2
             alpha_0 = FunctionsAndParsing.Parser.ParseExpression(alpha_box.Text, null)(null);
             m = FunctionsAndParsing.Parser.ParseExpression(m_box.Text, null)(null);
             c= FunctionsAndParsing.Parser.ParseExpression(c_box.Text, null)(null);
-            epsilon= FunctionsAndParsing.Parser.ParseExpression(epsilon_box.Text, null)(null);
+            h1= FunctionsAndParsing.Parser.ParseExpression(epsilon_box.Text, null)(null);
             period= FunctionsAndParsing.Parser.ParseExpression(T_box.Text, null)(null);
-            h = FunctionsAndParsing.Parser.ParseExpression(h_box.Text, null)(null);
+            h2 = FunctionsAndParsing.Parser.ParseExpression(h_box.Text, null)(null);
             Task task = new Task(init);
             task.Start();
         }

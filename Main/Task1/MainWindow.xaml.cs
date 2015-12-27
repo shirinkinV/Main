@@ -92,8 +92,7 @@ namespace Task1
             Func<double,double[], double[]> system = (t, x) => new double[] { x[1], -b / a * x[0] + c / a  };
             //double[] begin = new double[] { 0, V2 };
             double[] begin = new double[] { 0, V2 };
-            double h = 0.001;
-            double[] postBegin = new double[] { begin[0] + V2 * h, V2+h*(-b / a * 0 + c / a) };
+            double h = 0.001;         
             /*List<Method.ValueAndArgument> list = Method.integrateEquationVector(
                 new Method.ValueAndArgument(begin, 0), system, epsilon,
                 value =>
@@ -101,8 +100,8 @@ namespace Task1
                     T = value.argument;
                     return T <= period;
                 }, 0.001);*/
-            List<Method.ValueAndArgument> list = VerletMethod.Method.integrateEquationVectorWithSpeed(
-                new Method.ValueAndArgument(begin, 0), new Method.ValueAndArgument(postBegin, h), system, h,
+            List<Method.ValueAndArgument> list = VerletMethod.Method.integrateEquationVector(
+                new Method.ValueAndArgument(begin, 0), system, h,
                 value =>
                 {
                     T = value.argument;

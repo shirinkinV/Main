@@ -8,11 +8,14 @@
         Title="MainWindow" Height="350" Width="525">
     <Grid x:Name="grid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="258*"/>
+            <ColumnDefinition Width="259*"/>
         </Grid.ColumnDefinitions>
 
-        <WPF:OpenGLControl x:Name="capture" OpenGLDraw="capture_OpenGLDraw" OpenGLInitialized="capture_OpenGLInitialized" Resized="capture_Resized"/>
+        <WPF:OpenGLControl x:Name="capture" OpenGLDraw="capture_OpenGLDraw" OpenGLInitialized="capture_OpenGLInitialized" Resized="capture_Resized">
+        </WPF:OpenGLControl>
+        <RadioButton x:Name="runge_b" Content="RK" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="True" Checked="runge_b_Checked"/>
+        <RadioButton x:Name="verlet_b" Content="V" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" Checked="verlet_b_Checked"/>
 
         <PlotView:PlotView x:Name="plot" Grid.Column="1"/>
 

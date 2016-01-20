@@ -26,6 +26,17 @@ namespace FunctionsAndParsing
                 return p => function(0);
         }
 
+        public override bool IsNull()
+        {
+            if (arg == null)
+            {
+                if (function(0) == 0) return true;
+                else return false;
+            }
+            else
+                return false;
+        }
+
         public override Variable search(string name)
         {
             return arg.search(name);

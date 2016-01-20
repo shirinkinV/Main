@@ -33,9 +33,9 @@ namespace Task2
         Func<double, double> x2_func;
         Func<double, double> x3_func;
 
-        Func<double, double> x1_func_v;
-        Func<double, double> x2_func_v;
-        Func<double, double> x3_func_v;
+        Func<double, double> x1_func_2v;
+        Func<double, double> x2_func_2v;
+        Func<double, double> x3_func_2v;
 
         double T;
         double time=-1;
@@ -50,9 +50,9 @@ namespace Task2
         Func<double, double> K;
         Func<double, double> E;
 
-        Func<double, double> P_v;
-        Func<double, double> K_v;
-        Func<double, double> E_v;
+        Func<double, double> P_2v;
+        Func<double, double> K_2v;
+        Func<double, double> E_2v;
 
         bool verletFlag;
 
@@ -95,12 +95,12 @@ namespace Task2
             Func<double, double[], double[]> system = (t, x) =>
                {
                    var x3 = x[2];
-                   var x3der = x[3];      
-                   var x1der = x[1]; 
+                   var x3der = x[3];
+                   var x1der = x[1];
                    var x1 = x[0];
 
                    var p1 = l + x1 - x3;
-                   var p2 = x1der - x3der;     
+                   var p2 = x1der - x3der;
                    var p1cube = p1 * p1 * p1;
                    var p1square = p1 * p1;
 
@@ -112,7 +112,7 @@ namespace Task2
                    var x2onx3 = 0.5 - Rsquare / (2 * p1square);
                    var x2deronx1der = x2onx1;
                    var x2deronx3der = x2onx3;
-                   var ddtx2deronx1der = -Rsquare*p2/p1cube;
+                   var ddtx2deronx1der = -Rsquare * p2 / p1cube;
                    var ddtx2deronx3der = -ddtx2deronx1der;
 
                    var p4 = x2onx1;
@@ -123,16 +123,17 @@ namespace Task2
                    var p9 = x2deronx1der * p7;
                    var p10 = Rsquare * p2 * p2 / p1cube * x2deronx3der - x2der * ddtx2deronx3der + x2der * x2deronx3 + g * (1 + x2onx3);
                    var p11 = Rsquare * p2 * p2 / p1cube * x2deronx1der - x2der * ddtx2deronx1der + x2der * x2deronx1 - c / m * x1 + g * x2onx1;
-                   var p12 = (p5 * p11 - p6 * p10) / (p5*p9-p6*p8);
+                   var p12 = (p5 * p11 - p6 * p10) / (p5 * p9 - p6 * p8);
                    var p13 = (p10 - p8 * p12) / p5;
 
                    return new double[] { x[1], p13, x[3], p12 };
                };
-
             double x10 = dist;
             double x1d0 = 0;
+            double x20 = (l - R / Math.Cos(alpha_0));
+            double x2d0 = 0;
             double x30 = (l - R / Math.Cos(alpha_0)) + R * Math.Tan(alpha_0);
-            double x3d0 = 0;
+            double x3d0 = 4;
 
             List<Method.ValueAndArgument> listRunge = Method.integrateEquationVector(h1,
                 new Method.ValueAndArgument(new double[] { x10, x1d0, x30, x3d0 }, 0), system,
@@ -143,16 +144,33 @@ namespace Task2
                     return T <= period;
                 }, 0.001);
 
-            /*double[] begin = new double[] { x10, x1d0, x30, x3d0 };
+            Func<double, double[], double[]> system2 = (t, x) =>
+                {
+                    var x2 = x[0];
+                    var x3 = x[2];
+                    var x1 = x2 - l + Math.Sqrt(Rsquare + (x3 - x2) * (x3 - x2));
+
+                    var x1onx2 = 1 - (x3 - x2) / (Math.Sqrt(Rsquare + (x3 - x2) * (x3 - x2)));
+                    var x1onx3 = (x3 - x2) / (Math.Sqrt(Rsquare + (x3 - x2) * (x3 - x2)));
+                    var p1 = -c / m * x1 * x1onx2 + g;
+                    var p2 = -c / m * x1 * x1onx3 + g;
+
+                    return new double[] {x[1],p1,x[3],p2};
+                };
+
+            double[] begin = new double[] { x20, x2d0, x30, x3d0 };
             
             List<Method.ValueAndArgument> listVerlet = VerletMethod.Method.integrateEquationVectorWithSpeed(
-                new Method.ValueAndArgument(begin, 0),  system, h2,
+                new Method.ValueAndArgument(begin, 0),  system2, h2,
                 value =>
                 {
                     T = value.argument;
-
+                    if (RungeKuttaMethod.Method.difference(begin, value.value) < 1e-3&&T>0.1)
+                    {
+                        return false;
+                    }
                     return T <= period;
-                },0.001); */
+                },0.001);
 
             x1_func = Interpolator.interpolate(listRunge, 0);
             Func<double, double> x1_der = Interpolator.interpolate(listRunge, 1);
@@ -160,12 +178,12 @@ namespace Task2
             Func<double, double> x3_der = Interpolator.interpolate(listRunge, 3);
             x2_func = t => 0.5 * (l + x1_func(t) + x3_func(t)) - Rsquare / (2 * (l + x1_func(t) - x3_func(t)));
 
-           /* x1_func_v = Interpolator.interpolate(listVerlet, 0);
-            Func<double, double> x1_der_v = Interpolator.interpolate(listVerlet, 1);
-            x3_func_v = Interpolator.interpolate(listVerlet, 2);
-            Func<double, double> x3_der_v = Interpolator.interpolate(listVerlet, 3);
-            x2_func_v = t => 0.5 * (l + x1_func_v(t) + x3_func_v(t)) - Rsquare / (2 * (l + x1_func_v(t) - x3_func_v(t)));
-              */
+            x2_func_2v = Interpolator.interpolate(listVerlet, 0);
+            Func<double, double> x2_der_2v = Interpolator.interpolate(listVerlet, 1);
+            x3_func_2v = Interpolator.interpolate(listVerlet, 2);
+            Func<double, double> x3_der_2v = Interpolator.interpolate(listVerlet, 3);
+            x1_func_2v = t => Math.Sqrt(Math.Pow(x3_func_2v(t)- x2_func_2v(t),2)+Rsquare)-l+x2_func_2v(t);
+             
 
 
             Func<double, double> x2_der = t =>
@@ -177,16 +195,6 @@ namespace Task2
                 return 0.5 * (x1der + x3der) + Rsquare * (x1der - x3der) / (2 * (l + x1 - x3)*(l+x1- x3));
             };
 
-            /*
-            Func<double, double> x2_der_v = t =>
-            {
-                var x1der = x1_der_v(t);
-                var x3der = x3_der_v(t);
-                var x1 = x1_func_v(t);
-                var x3 = x3_func_v(t);
-                return 0.5 * (x1der + x3der) + Rsquare * (x1der - x3der) / (2 * (l + x1 - x3) * (l + x1 - x3));
-            };*/
-
 
             double P0 = -g * m * (x2_func(0) + x3_func(0)) + 0.5 * c * x1_func(0) * x2_func(0);
             P = t =>
@@ -195,14 +203,14 @@ namespace Task2
                 return -m * g * (x2_func(t) + x3_func(t)) + 0.5 * c * x1 * x1 - P0;
             };
 
-            /*double P0V = -g * m * (x2_func_v(0) + x3_func_v(0)) + 0.5 * c * x1_func_v(0) * x2_func_v(0);
-            P_v = t =>
+            double P02V = -g * m * (x2_func_2v(0) + x3_func_2v(0)) + 0.5 * c * x1_func_2v(0) * x1_func_2v(0);
+            P_2v = t =>
             {
-                var x1 = x1_func_v(t);
-                return -m * g * (x2_func_v(t) + x3_func_v(t)) + 0.5 * c * x1 * x1 - P0V;
-            };*/
+                var x1 = x1_func_2v(t);
+                return -m * g * (x2_func_2v(t) + x3_func_2v(t)) + 0.5 * c * x1 * x1 - P02V;
+            };
 
-           
+                double K0 = 0.5 * m * (x2_der(0) * x2_der(0) + x3_der(0) * x3_der(0));
             K = t =>
             {                          
                 var x2der = x2_der(t);
@@ -211,36 +219,37 @@ namespace Task2
             };
             E = t => P(t) + K(t); ;
 
-            /*K_v = t =>
+            double K02V = 0.5 * m * (x2_der(0) * x2_der(0) + x3_der(0) * x3_der(0));
+            K_2v = t =>
             {
-                var x2der = x2_der_v(t);
-                var x3der = x3_der_v(t);
+                var x2der = x2_der_2v(t);
+                var x3der = x3_der_2v(t);
                 return 0.5 * m * (x2der * x2der + x3der * x3der);
             };
-            E_v = t => P_v(t) + K_v(t);*/
+            E_2v = t => P_2v(t) + K_2v(t);
 
 
             initialized = true;
             if (plot.graphics.functions.Count != 0)
             {
-                /*if (!verletFlag)
-                {  */
+                if (!verletFlag)
+                {  
                     plot.graphics.functions.ElementAt(0).func = x1_func;
                     plot.graphics.functions.ElementAt(1).func = x2_func;
                     plot.graphics.functions.ElementAt(2).func = x3_func;
                     plot.graphics.functions.ElementAt(3).func = P;
                     plot.graphics.functions.ElementAt(4).func = K;
                     plot.graphics.functions.ElementAt(5).func = E;
-                /*}
+                }
                 else
                 {
-                    plot.graphics.functions.ElementAt(0).func = x1_func_v;
-                    plot.graphics.functions.ElementAt(1).func = x2_func_v;
-                    plot.graphics.functions.ElementAt(2).func = x3_func_v;
-                    plot.graphics.functions.ElementAt(3).func = P_v;
-                    plot.graphics.functions.ElementAt(4).func = K_v;
-                    plot.graphics.functions.ElementAt(5).func = E_v;
-                }   */
+                    plot.graphics.functions.ElementAt(0).func = x1_func_2v;
+                    plot.graphics.functions.ElementAt(1).func = x2_func_2v;
+                    plot.graphics.functions.ElementAt(2).func = x3_func_2v;
+                    plot.graphics.functions.ElementAt(3).func = P_2v;
+                    plot.graphics.functions.ElementAt(4).func = K_2v;
+                    plot.graphics.functions.ElementAt(5).func = E_2v;
+                }   
                 plot.graphics.functions.ElementAt(0).b = T;
                 plot.graphics.functions.ElementAt(1).b = T;
                 plot.graphics.functions.ElementAt(2).b = T;
@@ -284,7 +293,7 @@ namespace Task2
                 System.Threading.Thread.Sleep(100);
                 return;
             }
-            if (time == -1)
+             if (time == -1)
             {
                 ticks = DateTime.Now.Ticks;
                 time = 0;
@@ -303,8 +312,8 @@ namespace Task2
             gl.LoadIdentity();
             gl.Translate(0, 3, -2);
             gl.Rotate(10, 1, 0, 0);
-            /*if (!verletFlag)
-            { */
+            if (!verletFlag)
+            { 
                 gl.LineWidth(1);
                 gl.Color(0, 0, 0);
                 gl.Begin(OpenGL.GL_LINES);
@@ -341,46 +350,46 @@ namespace Task2
                 gl.Vertex4d(-1, 2, 0, 1);
                 gl.Vertex4d(1, 2, 0, 1);
                 gl.End();
-            /*}
+            }
             else
             {
                 gl.LineWidth(1);
                 gl.Color(0, 0, 0);
                 gl.Begin(OpenGL.GL_LINES);
                 double angle1 = 0, angle2 = Math.PI / 3 * 2, angle3 = -Math.PI / 3 * 2;
-                gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x1_func_v(time), 0.05 * Math.Sin(angle1), 1);
-                gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x2_func_v(time), 0.05 * Math.Sin(angle1), 1);
-                gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x1_func_v(time), 0.05 * Math.Sin(angle2), 1);
-                gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x2_func_v(time), 0.05 * Math.Sin(angle2), 1);
-                gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x1_func_v(time), 0.05 * Math.Sin(angle3), 1);
-                gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x2_func_v(time), 0.05 * Math.Sin(angle3), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x1_func_2v(time), 0.05 * Math.Sin(angle1), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x2_func_2v(time), 0.05 * Math.Sin(angle1), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x1_func_2v(time), 0.05 * Math.Sin(angle2), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x2_func_2v(time), 0.05 * Math.Sin(angle2), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x1_func_2v(time), 0.05 * Math.Sin(angle3), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x2_func_2v(time), 0.05 * Math.Sin(angle3), 1);
 
-                gl.Vertex4d(R * Math.Cos(angle1), 1 - x3_func_v(time), R * Math.Sin(angle1), 1);
-                gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x2_func_v(time), 0.05 * Math.Sin(angle1), 1);
-                gl.Vertex4d(R * Math.Cos(angle2), 1 - x3_func_v(time), R * Math.Sin(angle2), 1);
-                gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x2_func_v(time), 0.05 * Math.Sin(angle2), 1);
-                gl.Vertex4d(R * Math.Cos(angle3), 1 - x3_func_v(time), R * Math.Sin(angle3), 1);
-                gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x2_func_v(time), 0.05 * Math.Sin(angle3), 1);
+                gl.Vertex4d(R * Math.Cos(angle1), 1 - x3_func_2v(time), R * Math.Sin(angle1), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle1), 1 - x2_func_2v(time), 0.05 * Math.Sin(angle1), 1);
+                gl.Vertex4d(R * Math.Cos(angle2), 1 - x3_func_2v(time), R * Math.Sin(angle2), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle2), 1 - x2_func_2v(time), 0.05 * Math.Sin(angle2), 1);
+                gl.Vertex4d(R * Math.Cos(angle3), 1 - x3_func_2v(time), R * Math.Sin(angle3), 1);
+                gl.Vertex4d(0.05 * Math.Cos(angle3), 1 - x2_func_2v(time), 0.05 * Math.Sin(angle3), 1);
 
                 gl.End();
 
                 gl.LineWidth(2);
                 gl.Color(1.0, 0, 0);
-                drawCircle(gl, R, 1 - x3_func_v(time));
+                drawCircle(gl, R, 1 - x3_func_2v(time));
 
                 gl.Color(0.0, 1, 0);
-                drawCircle(gl, 0.05, 1 - x2_func_v(time));
+                drawCircle(gl, 0.05, 1 - x2_func_2v(time));
 
                 gl.LineWidth(1);
                 gl.Color(0.0, 0, 1);
-                drawSpring(gl, 0.05, 2, 1 - x1_func_v(time));
+                drawSpring(gl, 0.05, 2, 1 - x1_func_2v(time));
 
                 gl.Color(0, 0, 0);
                 gl.Begin(OpenGL.GL_LINES);
                 gl.Vertex4d(-1, 2, 0, 1);
                 gl.Vertex4d(1, 2, 0, 1);
                 gl.End();
-            }     */
+            }  
 
             gl.Flush();
         }
@@ -430,12 +439,12 @@ namespace Task2
             verletFlag = true;
             if (plot.graphics.functions.Count != 0)
             {
-                plot.graphics.functions.ElementAt(0).func = x1_func_v;
-                plot.graphics.functions.ElementAt(1).func = x2_func_v;
-                plot.graphics.functions.ElementAt(2).func = x3_func_v;
-                plot.graphics.functions.ElementAt(3).func = P_v;
-                plot.graphics.functions.ElementAt(4).func = K_v;
-                plot.graphics.functions.ElementAt(5).func = E_v;
+                plot.graphics.functions.ElementAt(0).func = x1_func_2v;
+                plot.graphics.functions.ElementAt(1).func = x2_func_2v;
+                plot.graphics.functions.ElementAt(2).func = x3_func_2v;
+                plot.graphics.functions.ElementAt(3).func = P_2v;
+                plot.graphics.functions.ElementAt(4).func = K_2v;
+                plot.graphics.functions.ElementAt(5).func = E_2v;
             }
         }
     }

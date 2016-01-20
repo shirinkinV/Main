@@ -30,6 +30,11 @@ namespace FunctionsAndParsing
             return p => length(arg.getFunction()(p));
         }
 
+        public override bool IsNull()
+        {
+            return arg.IsNull();
+        }
+
         public override Variable search(string name)
         {
             Variable result = null;

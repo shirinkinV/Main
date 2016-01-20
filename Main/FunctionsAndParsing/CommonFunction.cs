@@ -130,5 +130,8 @@ namespace FunctionsAndParsing
         {
             return p => new double[] { getCommonFunction()(p) };
         }
+
+        public abstract bool IsNull();
+        public abstract string print();
     }
 }

@@ -21,6 +21,11 @@ namespace FunctionsAndParsing
             return p => p[index];
         }
 
+        public override bool IsNull()
+        {
+            return false;
+        }
+
         public override Variable search(string name)
         {
             if (this.name == name)

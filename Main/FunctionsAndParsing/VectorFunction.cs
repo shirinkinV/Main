@@ -59,5 +59,14 @@ namespace FunctionsAndParsing
             }
             return result;
         }
+
+        public bool IsNull()
+        {
+            for(int i = 0; i < components.Count; i++)
+            {
+                if (!components[i].IsNull()) return false;
+            }
+            return true;
+        }
     }
 }

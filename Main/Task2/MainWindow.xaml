@@ -35,7 +35,8 @@
                     <Button x:Name="compute" Content="Compute" HorizontalAlignment="Left" Margin="105,75,0,0" VerticalAlignment="Top" Width="99" Click="compute_Click"/>
                     <Label x:Name="label5" Content="h2" HorizontalAlignment="Left" Margin="209,10,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="h_box" HorizontalAlignment="Left" Height="23" Margin="237,14,0,0" TextWrapping="Wrap" Text="10^(-5)" VerticalAlignment="Top" Width="68"/>
-                    <RadioButton x:Name="runge" Content="RungeKutta" HorizontalAlignment="Left" Margin="209,47,0,0" VerticalAlignment="Top" GroupName="method" IsChecked="True" Checked="runge_Checked"/>
+                    <RadioButton x:Name="runge" Content="RungeKutta" HorizontalAlignment="Left" Margin="209,47,0,0" VerticalAlignment="Top" GroupName="method" Checked="runge_Checked" IsChecked="True"/>
+                    <RadioButton x:Name="verlet" Content="Verlet" HorizontalAlignment="Left" Margin="209,67,0,0" VerticalAlignment="Top" GroupName="method" Checked="verlet_Checked" IsChecked="False"/>
                 </Grid>
             </Border>
         </Grid>

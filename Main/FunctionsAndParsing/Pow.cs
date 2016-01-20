@@ -50,5 +50,11 @@ namespace FunctionsAndParsing
             }
             return result;
         }
+
+        public override bool IsNull()
+        {
+            if (baseAndPower.Count == 0) return true;
+            return baseAndPower[0].IsNull();
+        }
     }
 }

@@ -90,6 +90,7 @@ namespace FunctionsAndParsing
                 GetChar();
             }
         }
+
         private double GetNum()
         {
             string result = "";
@@ -180,28 +181,46 @@ namespace FunctionsAndParsing
         private CommonFunction Expression()
         {
             Sum sum = new Sum();
+            CommonFunction term = null;
             if (!IsAddop(look))
             {
-                sum.operands.Add(Term());
-                sum.signs.Add(true);
+                term = Term();
+                if (!term.IsNull())
+                {
+                    sum.operands.Add(term);
+                    sum.signs.Add(true);
+                } 
             }
             while (IsAddop(look))
             {
+                
                 switch (look)
                 {
                     case '+':
                         Match('+');
-                        sum.operands.Add(Term());
-                        sum.signs.Add(true);
+                        term = Term();
+                        if (!term.IsNull())
+                        {
+                            sum.operands.Add(term);
+                            sum.signs.Add(true);
+                        }
                         break;
                     case '-':
                         Match('-');
-                        sum.operands.Add(Term());
-                        sum.signs.Add(false);
+                        term = Term();
+                        if (!term.IsNull())
+                        {
+                            sum.operands.Add(term);
+                            sum.signs.Add(false);
+                        }
                         break;
                     default:
                         throw new Exception();
                 }
+            }
+            if (sum.operands.Count == 0)
+            {
+                return new OneVarFunction(x => 0, null);
             }
             return sum;
         }
@@ -209,39 +228,89 @@ namespace FunctionsAndParsing
         private CommonFunction Term()
         {
             Mul mul = new Mul();
-            mul.operands.Add(Factor());
-            mul.powers.Add(true);
+            CommonFunction factor = Factor();
+            if (!factor.IsNull())
+            {
+                mul.operands.Add(factor);
+                mul.powers.Add(true);
+            }
+            else
+                return new OneVarFunction(x => 0, null);
+            
             while (IsMulop(look))
             {
                 switch (look)
                 {
                     case '*':
                         Match('*');
-                        mul.operands.Add(Factor());
-                        mul.powers.Add(true);
+                        factor = Factor();
+                        if (!factor.IsNull())
+                        {
+                            mul.operands.Add(factor);
+                            mul.powers.Add(true);
+                        }
+                        else
+                            return new OneVarFunction(x => 0, null);
                         break;
                     case '/':
                         Match('/');
-                        mul.operands.Add(Factor());
-                        mul.powers.Add(false);
+                        factor = Factor();
+                        if (!factor.IsNull())
+                        {
+                            mul.operands.Add(factor);
+                            mul.powers.Add(false);
+                        }
+                        else
+                            throw new ArithmeticException("null devision");
                         break;
                     default:
                         throw new Exception();
                 }
             }
+            if (mul.operands.Count == 0) return new OneVarFunction(x => 0, null);
+            if (mul.operands.Count == 1) return mul.operands[0];
             return mul;
         }
 
         private CommonFunction Factor()
         {
             Pow pow = new Pow();
-            pow.baseAndPower.Add(Power());
+            CommonFunction power = Power();
+            if (!power.IsNull())
+            {
+                pow.baseAndPower.Add(power);
+            }
+            else
+                return new OneVarFunction(x => 0, null);
             while (IsCaret(look))
             {
                 Match('^');
-                pow.baseAndPower.Add(Power());
+                power = Power();
+                if (!power.IsNull())
+                {
+                    pow.baseAndPower.Add(power);
+                }
+                else
+                {
+                    if (pow.baseAndPower.Count > 1)
+                    {
+                        pow.baseAndPower.RemoveAt(pow.baseAndPower.Count - 1);
+                        return pow;
+                    }
+                    else
+                    {
+                        return new OneVarFunction(x => 1, null);
+                    }
+                }
             }
-            return pow;
+            if (pow.baseAndPower.Count == 1)
+            {
+                return pow.baseAndPower[0];
+            }
+            else
+            {
+                return pow;
+            }
         }
 
         private CommonFunction Power()
@@ -269,11 +338,11 @@ namespace FunctionsAndParsing
                         result = new Variable(variables[name]);
                     else
                     {
-                        if (name == "PI")
+                        if (name == "PI"||name=="pi")
                         {
                             return new OneVarFunction(x => Math.PI, null);
                         }
-                        if (name == "e")
+                        if (name == "e"||name=="E")
                         {
                             return new OneVarFunction(x => Math.E, null);
                         }

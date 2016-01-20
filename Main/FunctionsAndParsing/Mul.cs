@@ -61,5 +61,15 @@ namespace FunctionsAndParsing
             }
             return result;
         }
+
+        public override bool IsNull()
+        {
+            if (operands.Count == 0) return true;
+            for(int i = 0; i < operands.Count; i++)
+            {
+                if (operands[i].IsNull()) return true;
+            }
+            return false;
+        }
     }
 }

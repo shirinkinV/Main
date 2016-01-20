@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sketches", "Sketch\Sketches.csproj", "{CF6FF195-00B9-4F29-B19A-A70A5AA046EE}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task1", "Task1\Task1.csproj", "{DEB3CD32-9E07-4153-9DB9-07F6B42D6D44}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VerletMethod", "VerletMethod\VerletMethod.csproj", "{7169C4D4-8997-4EA8-A742-33D5A713DCDD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserTest", "ParserTest\ParserTest.csproj", "{847F3204-A82A-4CBC-BACE-5CB6B3C322A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,6 +68,12 @@ Global
 		{7169C4D4-8997-4EA8-A742-33D5A713DCDD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7169C4D4-8997-4EA8-A742-33D5A713DCDD}.Release-Signed|Any CPU.ActiveCfg = Release|Any CPU
 		{7169C4D4-8997-4EA8-A742-33D5A713DCDD}.Release-Signed|Any CPU.Build.0 = Release|Any CPU
+		{847F3204-A82A-4CBC-BACE-5CB6B3C322A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{847F3204-A82A-4CBC-BACE-5CB6B3C322A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{847F3204-A82A-4CBC-BACE-5CB6B3C322A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{847F3204-A82A-4CBC-BACE-5CB6B3C322A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{847F3204-A82A-4CBC-BACE-5CB6B3C322A3}.Release-Signed|Any CPU.ActiveCfg = Release|Any CPU
+		{847F3204-A82A-4CBC-BACE-5CB6B3C322A3}.Release-Signed|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

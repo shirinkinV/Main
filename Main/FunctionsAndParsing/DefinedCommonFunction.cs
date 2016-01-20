@@ -20,6 +20,11 @@ namespace FunctionsAndParsing
             return function;
         }
 
+        public override bool IsNull()
+        {
+            return false;
+        }
+
         public override Variable search(string name)
         {
             return null;

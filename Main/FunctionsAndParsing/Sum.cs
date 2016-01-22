@@ -68,5 +68,48 @@ namespace FunctionsAndParsing
             if (operands.Count == 0) return true;
             else return false;
         }
+
+        public override string print()
+        {
+            string result = "";
+            for(int i = 0; i < operands.Count;i++)
+            {
+                if (i == 0)
+                {
+                    if (!signs[0])
+                    {
+                        result += "-";
+                    }
+                }
+                else
+                {
+                    result += signs[i] ? "+" : "-";
+                }
+                if(!signs[i])
+                {
+                    if(operands[i] is Sum)
+                    {                             
+                        result += "(" + operands[i].print() + ")"; 
+                    }
+                    else
+                    {
+                        string term = operands[i].print();
+                        if (term[0] != '-')
+                            result += term;
+                        else
+                            result += "(" + term + ")";
+                    }
+                }
+                else
+                {
+                    string term = operands[i].print();
+                    if (term[0] != '-')
+                        result += term;
+                    else
+                        result += "(" + term + ")";
+                }
+            }
+            return result;
+        }
     }
 }

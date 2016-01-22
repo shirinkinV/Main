@@ -9,9 +9,11 @@ namespace FunctionsAndParsing
     public class DefinedCommonFunction : CommonFunction
     {
         protected Func<double[], double> function;
+        protected string performance;
 
-        public DefinedCommonFunction(Func<double[], double> function)
+        public DefinedCommonFunction(Func<double[], double> function, string performance)
         {
+            this.performance = performance;
             this.function = function;
         }
 
@@ -23,6 +25,11 @@ namespace FunctionsAndParsing
         public override bool IsNull()
         {
             return false;
+        }
+
+        public override string print()
+        {
+            return performance;
         }
 
         public override Variable search(string name)

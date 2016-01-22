@@ -71,5 +71,27 @@ namespace FunctionsAndParsing
             }
             return false;
         }
+
+        public override string print()
+        {
+            string result = "";
+            for(int i = 0; i < operands.Count; i++)
+            {
+                if (i != 0) result += powers[i] ? "*" : "/";
+                if(operands[i] is Sum)
+                {                  
+                    result += "(" + operands[i].print() + ")";  
+                }
+                else
+                {
+                    string factor = operands[i].print();
+                    if (factor[0] != '-')
+                        result += factor;
+                    else
+                        result += "(" + factor + ")";
+                }
+            }
+            return result;
+        }
     }
 }

@@ -19,12 +19,12 @@ namespace FunctionsAndParsing
             List<DefinedCommonFunction> derivativesU = new List<DefinedCommonFunction>();
             List<DefinedCommonFunction> derivativesV = new List<DefinedCommonFunction>();
             NumericalDerivative derivative = new NumericalDerivative();
-            derivativesU.Add(new DefinedCommonFunction(derivative.CreatePartialDerivativeFunctionHandle(components[0].getCommonFunction(), 0, 1)));
-            derivativesV.Add(new DefinedCommonFunction(derivative.CreatePartialDerivativeFunctionHandle(components[0].getCommonFunction(), 1, 1)));
-            derivativesU.Add(new DefinedCommonFunction(derivative.CreatePartialDerivativeFunctionHandle(components[1].getCommonFunction(), 0, 1)));
-            derivativesV.Add(new DefinedCommonFunction(derivative.CreatePartialDerivativeFunctionHandle(components[1].getCommonFunction(), 1, 1)));
-            derivativesU.Add(new DefinedCommonFunction(derivative.CreatePartialDerivativeFunctionHandle(components[2].getCommonFunction(), 0, 1)));
-            derivativesV.Add(new DefinedCommonFunction(derivative.CreatePartialDerivativeFunctionHandle(components[2].getCommonFunction(), 1, 1)));
+            derivativesU.Add(new DefinedCommonFunction(derivative.CreatePartialDerivativeFunctionHandle(components[0].getCommonFunction(), 0, 1), "null"));
+            derivativesV.Add(new DefinedCommonFunction(derivative.CreatePartialDerivativeFunctionHandle(components[0].getCommonFunction(), 1, 1), "null"));
+            derivativesU.Add(new DefinedCommonFunction(derivative.CreatePartialDerivativeFunctionHandle(components[1].getCommonFunction(), 0, 1), "null"));
+            derivativesV.Add(new DefinedCommonFunction(derivative.CreatePartialDerivativeFunctionHandle(components[1].getCommonFunction(), 1, 1), "null"));
+            derivativesU.Add(new DefinedCommonFunction(derivative.CreatePartialDerivativeFunctionHandle(components[2].getCommonFunction(), 0, 1), "null"));
+            derivativesV.Add(new DefinedCommonFunction(derivative.CreatePartialDerivativeFunctionHandle(components[2].getCommonFunction(), 1, 1), "null"));
 
             VectorFunction v1 = new VectorFunction(derivativesU);
             VectorFunction v2 = new VectorFunction(derivativesV);

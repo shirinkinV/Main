@@ -12,8 +12,16 @@ namespace FunctionsAndParsing
 
         public Func<double, double> function = p => Double.NaN;
 
-        public OneVarFunction(Func<double, double> function, CommonFunction arg)
+        public string performance;
+
+        public OneVarFunction(Func<double, double> function, CommonFunction arg, string performance)
         {
+            if (performance == "") throw new ArgumentException("empty string of performance");
+            if (performance.IndexOf("argument") == -1 && arg != null)
+            {
+                throw new ArgumentException("argument not found");
+            }
+            this.performance = performance;
             this.function = function;
             this.arg = arg;
         }
@@ -35,6 +43,21 @@ namespace FunctionsAndParsing
             }
             else
                 return false;
+        }
+
+        public override string print()
+        {
+            string result = performance;
+            if (arg != null)
+            {
+                int indexOfArgument = result.IndexOf("argument");
+                result = result.Remove(indexOfArgument, 8);
+                if (result[indexOfArgument - 1] == '(' && result[indexOfArgument] == ')')
+                    result = result.Insert(indexOfArgument, arg.print());
+                else
+                    result = result.Insert(indexOfArgument, "(" + arg.print() + ")");
+            }
+            return result;
         }
 
         public override Variable search(string name)

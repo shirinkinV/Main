@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VerletMethod", "VerletMetho
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserTest", "ParserTest\ParserTest.csproj", "{847F3204-A82A-4CBC-BACE-5CB6B3C322A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StringDerivative", "..\..\Mechanics\Main\StringDerivative\StringDerivative.csproj", "{4F0C8195-83F3-42F6-81B8-4C215AE23409}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,12 @@ Global
 		{847F3204-A82A-4CBC-BACE-5CB6B3C322A3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{847F3204-A82A-4CBC-BACE-5CB6B3C322A3}.Release-Signed|Any CPU.ActiveCfg = Release|Any CPU
 		{847F3204-A82A-4CBC-BACE-5CB6B3C322A3}.Release-Signed|Any CPU.Build.0 = Release|Any CPU
+		{4F0C8195-83F3-42F6-81B8-4C215AE23409}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F0C8195-83F3-42F6-81B8-4C215AE23409}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F0C8195-83F3-42F6-81B8-4C215AE23409}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F0C8195-83F3-42F6-81B8-4C215AE23409}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F0C8195-83F3-42F6-81B8-4C215AE23409}.Release-Signed|Any CPU.ActiveCfg = Release|Any CPU
+		{4F0C8195-83F3-42F6-81B8-4C215AE23409}.Release-Signed|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -11,7 +11,7 @@ namespace FunctionsAndParsing
         public int index;
         public string name;
 
-        public Variable(int index)
+        public Variable(int index, string name)
         {
             this.index = index;
         }
@@ -24,6 +24,11 @@ namespace FunctionsAndParsing
         public override bool IsNull()
         {
             return false;
+        }
+
+        public override string print()
+        {
+            return name;
         }
 
         public override Variable search(string name)

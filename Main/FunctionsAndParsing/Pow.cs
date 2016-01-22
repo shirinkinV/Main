@@ -56,5 +56,27 @@ namespace FunctionsAndParsing
             if (baseAndPower.Count == 0) return true;
             return baseAndPower[0].IsNull();
         }
+
+        public override string print()
+        {
+            string result = "";
+            if (baseAndPower[0] is Mul || baseAndPower[0] is Sum)
+                result += "(" + baseAndPower[0].print() + ")";
+            else
+                result += baseAndPower[0].print();
+            for (int i = 1; i < baseAndPower.Count; i++)
+            {
+                if (i != 0) result += "^";
+                if(baseAndPower[i] is Mul||baseAndPower[i] is Sum)
+                {
+                    result += "(" + baseAndPower[i].print() + ")";
+                }
+                else
+                {
+                    result += baseAndPower[i].print();
+                }
+            }
+            return result;
+        }
     }
 }

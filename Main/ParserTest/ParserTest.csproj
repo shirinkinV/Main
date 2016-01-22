@@ -45,6 +45,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Mechanics\Main\StringDerivative\StringDerivative.csproj">
+      <Project>{4f0c8195-83f3-42f6-81b8-4c215ae23409}</Project>
+      <Name>StringDerivative</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FunctionsAndParsing\FunctionsAndParsing.csproj">
       <Project>{859450fb-44e9-4927-9b85-7d6d20bb8320}</Project>
       <Name>FunctionsAndParsing</Name>

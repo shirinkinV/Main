@@ -35,6 +35,11 @@ namespace FunctionsAndParsing
             return arg.IsNull();
         }
 
+        public override string print()
+        {
+            throw new NotImplementedException();
+        }
+
         public override Variable search(string name)
         {
             Variable result = null;

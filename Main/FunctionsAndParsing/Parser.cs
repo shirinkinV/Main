@@ -56,7 +56,7 @@ namespace FunctionsAndParsing
 
         private bool IsAlpha(char c)
         {
-            return char.IsLetter(c);
+            return char.IsLetter(c)||c=='\'';
         }
 
         private static bool IsAddop(char c)
@@ -155,11 +155,11 @@ namespace FunctionsAndParsing
         {
             InitBuiltinFunctions();
             this.expression = expression;
-            if(variables!=null)
-            for (int i = 0; i < variables.Length; i++)
-            {
-                this.variables[variables[i]] = i;
-            }
+            if (variables != null)
+                for (int i = 0; i < variables.Length; i++)
+                {
+                    this.variables[variables[i]] = i;
+                }
             Reset();
         }
 
@@ -189,11 +189,11 @@ namespace FunctionsAndParsing
                 {
                     sum.operands.Add(term);
                     sum.signs.Add(true);
-                } 
+                }
             }
             while (IsAddop(look))
             {
-                
+
                 switch (look)
                 {
                     case '+':
@@ -220,7 +220,7 @@ namespace FunctionsAndParsing
             }
             if (sum.operands.Count == 0)
             {
-                return new OneVarFunction(x => 0, null);
+                return new OneVarFunction(x => 0, null, "0");
             }
             return sum;
         }
@@ -234,9 +234,20 @@ namespace FunctionsAndParsing
                 mul.operands.Add(factor);
                 mul.powers.Add(true);
             }
-            else
-                return new OneVarFunction(x => 0, null);
-            
+            else {
+                while (IsMulop(look))
+                {
+                    switch (look)
+                    {
+                        case '*':
+                            Match('*'); break;
+                        case '/':
+                            Match('/'); break;
+                    }
+                    Factor();
+                }        
+                return new OneVarFunction(x => 0, null, "0");
+            }
             while (IsMulop(look))
             {
                 switch (look)
@@ -249,8 +260,20 @@ namespace FunctionsAndParsing
                             mul.operands.Add(factor);
                             mul.powers.Add(true);
                         }
-                        else
-                            return new OneVarFunction(x => 0, null);
+                        else {
+                            while (IsMulop(look))
+                            {
+                                switch (look)
+                                {
+                                    case '*':
+                                        Match('*'); break;
+                                    case '/':
+                                        Match('/'); break;
+                                }
+                                Factor();
+                            }
+                            return new OneVarFunction(x => 0, null, "0");
+                        }
                         break;
                     case '/':
                         Match('/');
@@ -267,7 +290,7 @@ namespace FunctionsAndParsing
                         throw new Exception();
                 }
             }
-            if (mul.operands.Count == 0) return new OneVarFunction(x => 0, null);
+            if (mul.operands.Count == 0) return new OneVarFunction(x => 0, null, "0");
             if (mul.operands.Count == 1) return mul.operands[0];
             return mul;
         }
@@ -280,8 +303,14 @@ namespace FunctionsAndParsing
             {
                 pow.baseAndPower.Add(power);
             }
-            else
-                return new OneVarFunction(x => 0, null);
+            else {
+                while (IsCaret(look))
+                {
+                    Match('^');
+                    Power();
+                }
+                return new OneVarFunction(x => 0, null, "0");
+            }
             while (IsCaret(look))
             {
                 Match('^');
@@ -295,11 +324,21 @@ namespace FunctionsAndParsing
                     if (pow.baseAndPower.Count > 1)
                     {
                         pow.baseAndPower.RemoveAt(pow.baseAndPower.Count - 1);
+                        while (IsCaret(look))
+                        {
+                            Match('^');
+                            Power();
+                        }
                         return pow;
                     }
                     else
                     {
-                        return new OneVarFunction(x => 1, null);
+                        while (IsCaret(look))
+                        {
+                            Match('^');
+                            Power();
+                        }
+                        return new OneVarFunction(x => 1, null, "1");
                     }
                 }
             }
@@ -321,7 +360,7 @@ namespace FunctionsAndParsing
                 Match('(');
                 result = Expression();
                 Match(')');
-                return result;              
+                return result;
             }
             if (IsAlpha(look))
             {
@@ -329,33 +368,34 @@ namespace FunctionsAndParsing
                 if (look == '(')
                 {
                     Match('(');
-                    result = new OneVarFunction(builtInFunctions[name],(CommonFunction)Expression());
+                    CommonFunction arg = (CommonFunction)Expression();
+                    result = new OneVarFunction(builtInFunctions[name], arg, name + "(argument)");
                     Match(')');
                 }
                 else
                 {
                     if (variables.ContainsKey(name))
-                        result = new Variable(variables[name]);
+                        result = new Variable(variables[name],name);
                     else
                     {
-                        if (name == "PI"||name=="pi")
+                        if (name == "PI" || name == "pi")
                         {
-                            return new OneVarFunction(x => Math.PI, null);
+                            return new OneVarFunction(x => Math.PI, null, "PI");
                         }
-                        if (name == "e"||name=="E")
+                        if (name == "e" || name == "E")
                         {
-                            return new OneVarFunction(x => Math.E, null);
+                            return new OneVarFunction(x => Math.E, null, "E");
                         }
-                        variables[name] = variables.Last().Value + 1;
-                        result = new Variable(variables[name]);
+                        variables[name] = variables.Count != 0 ? variables.Last().Value + 1 : 0;
+                        result = new Variable(variables[name],name);
                     }
                     ((Variable)result).name = name;
                 }
             }
             else
             {
-                double constant=GetNum();
-                result = new OneVarFunction(x => constant,null);
+                double constant = GetNum();
+                result = new OneVarFunction(x => constant, null, "" + constant);
             }
 
             return result;
